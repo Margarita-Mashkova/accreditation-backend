@@ -45,7 +45,7 @@ public class User implements UserDetails {
     @NonNull
     private Role role;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private List<OPOP> opops;
 
