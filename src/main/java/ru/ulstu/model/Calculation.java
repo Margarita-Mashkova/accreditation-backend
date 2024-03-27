@@ -10,27 +10,34 @@ import java.util.Date;
 @NoArgsConstructor
 @RequiredArgsConstructor
 public class Calculation {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @EmbeddedId
+    @NonNull
+    private CalculationId id;
 
     @ManyToOne
-    @JoinColumn(name = "indicator_id")
+    @MapsId("indicator_id")
+    @NonNull
     private Indicator indicator;
 
     @ManyToOne
-    @JoinColumn(name = "opop_id")
+    @MapsId("opop_id")
+    @NonNull
     private OPOP opop;
 
-    @NonNull
-    private Date date;
-
     // значение показателя, рассчитанное по формуле
+    @NonNull
     private float value;
 
     // количество баллов (рассчитывается по правилам «если-то» в зависимости от значения показателя)
+    @NonNull
     private int score;
 
     // является ли данное значение планируемым (расчет показателей на будущие годы)
-    private boolean isPlanned;
+    private boolean planned;
+
+    @PostLoad
+    private void onLoad() {
+        Date dateNow = new Date();
+        this.planned = dateNow.before(id.getDate());
+    }
 }

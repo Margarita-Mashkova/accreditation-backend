@@ -10,6 +10,8 @@ import lombok.*;
 @RequiredArgsConstructor
 public class Variable {
     @Id
+    @NonNull
+    @Column(unique = true)
     private String key;
 
     @NonNull

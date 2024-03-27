@@ -1,32 +1,35 @@
 package ru.ulstu.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
-import java.util.Date;
+import java.io.Serializable;
 
 // хранятся значения переменных для расчета в определенный год и для определенной ОПОП
 @Data
 @Entity
 @NoArgsConstructor
 @RequiredArgsConstructor
-@Table(name = "variable_value")
+@Table(name = "variable_opop")
 public class Value {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
-    // TODO: Подумать над типом данных
-    private float value;
-
+    @EmbeddedId
     @NonNull
-    private Date date;
+    private ValueId id;
 
     @ManyToOne
-    @JoinColumn(name = "OPOP_id")
+    @MapsId("opop_id")
+    @NonNull
     private OPOP opop;
 
     @ManyToOne
-    @JoinColumn(name = "variable_key")
+    @MapsId("variable_key")
+    @NonNull
     private Variable variable;
+
+    // TODO: Подумать над типом данных
+    @NonNull
+    private float value;
 }

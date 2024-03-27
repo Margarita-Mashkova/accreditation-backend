@@ -4,9 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class OPOPDto {
+public class CalculationDto {
+    private CalculationIdDto id;
+    private float value;
+    private int score;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long id;
-    private String name;
-    private String userLogin;
+    private boolean planned;
 }

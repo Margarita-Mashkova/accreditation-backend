@@ -12,6 +12,8 @@ public class Indicator {
 
     //TODO: String?
     @Id
+    @Column(unique = true)
+    @NonNull
     private String key;
 
     @NonNull

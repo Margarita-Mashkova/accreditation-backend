@@ -1,18 +1,15 @@
 package ru.ulstu.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.ulstu.model.OPOP;
 import ru.ulstu.model.User;
 import ru.ulstu.model.enums.Role;
 import ru.ulstu.repository.UserRepository;
-import ru.ulstu.service.exception.OPOPService;
 import ru.ulstu.service.exception.UserLoginAlreadyExistsException;
 import ru.ulstu.service.exception.UserNotFoundException;
 import ru.ulstu.service.exception.WrongLoginOrPasswordException;
@@ -26,8 +23,6 @@ import java.util.Optional;
 public class UserService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private OPOPService opopService;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
@@ -64,14 +59,14 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public User addUser(String name, String surname, String patronymic, String login, String password,
-                        Role role, List<Long> opops) {
+                        Role role) {
         if (login != null && findUserByLogin(login) == null) {
             User user = new User(name, surname, patronymic, login, passwordEncoder.encode(password), role);
-            if (opops != null){
+            /*if (opops != null){
                 user.setOpops(opops.stream()
-                        .map(opop_id -> opopService.findOPOPById(opop_id))
+                        .map(opop_id -> opopService.findOpopById(opop_id))
                         .toList());
-            }
+            }*/
             validatorUtil.validate(user);
             return userRepository.save(user);
         } else {
@@ -80,9 +75,9 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public User updateUser(User user, String name, String surname, String patronymic, String login, String password,
-                           Role role, List<Long> opops) {
-        User userDB = findUserById(user.getId());
+    public User updateUser(Long id, String name, String surname, String patronymic, String login, String password,
+                           Role role) {
+        User userDB = findUserById(id);
         userDB.setName(name);
         userDB.setSurname(surname);
         userDB.setPatronymic(patronymic);
@@ -96,11 +91,11 @@ public class UserService implements UserDetailsService {
         userDB.setPassword(passwordEncoder.encode(password));
         if (role != null)
             userDB.setRole(role);
-        if (opops != null){
+        /*if (opops != null){
             userDB.setOpops(opops.stream()
-                    .map(opop_id -> opopService.findOPOPById(opop_id))
+                    .map(opop_id -> opopService.findOpopById(opop_id))
                     .toList());
-        }
+        }*/
         validatorUtil.validate(userDB);
         return userRepository.save(userDB);
     }

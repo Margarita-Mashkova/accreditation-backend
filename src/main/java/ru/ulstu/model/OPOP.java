@@ -15,6 +15,7 @@ public class OPOP {
 
     @NonNull
     @NotBlank(message = "OPOP name can't be null or empty")
+    @Column(unique = true)
     private String name;
 
     @ManyToOne

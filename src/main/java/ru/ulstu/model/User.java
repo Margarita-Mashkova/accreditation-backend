@@ -36,6 +36,7 @@ public class User implements UserDetails {
 
     @NonNull
     @NotBlank(message = "User login can't be null or empty")
+    @Column(unique = true)
     private String login;
 
     @NonNull
