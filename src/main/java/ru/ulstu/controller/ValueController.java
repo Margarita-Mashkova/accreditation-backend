@@ -1,5 +1,6 @@
 package ru.ulstu.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ public class ValueController {
     @Autowired
     private ValueMapper valueMapper;
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping("/all")
     public List<ValueDto> findAllValues(){
         return valueService.findAllValues().stream()
@@ -26,6 +28,7 @@ public class ValueController {
                 .toList();
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping("/filtered")
     public List<ValueDto> findValuesByOpopAndDate(@RequestParam Long opopId,
                                                   @RequestParam @DateTimeFormat(pattern= "yyyy-MM-dd") Date date){
@@ -34,6 +37,7 @@ public class ValueController {
                 .toList();
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping
     public ValueDto findValue(@RequestParam Long opopId, @RequestParam String variableKey,
                               @RequestParam @DateTimeFormat(pattern= "yyyy-MM-dd") Date date){
@@ -41,23 +45,27 @@ public class ValueController {
         return valueMapper.toValueDto(valueService.findValue(valueMapper.fromValueIdDto(valueIdDto)));
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @PostMapping
     public ValueDto createValue(@RequestBody ValueDto valueDto){
         return valueMapper.toValueDto(valueService.addValue(
                 valueMapper.fromValueIdDto(valueDto.getId()), valueDto.getValue()));
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @PutMapping
     public ValueDto updateValue(@RequestBody ValueDto valueDto){
         return valueMapper.toValueDto(valueService.updateValue(
                 valueMapper.fromValueIdDto(valueDto.getId()), valueDto.getValue()));
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @DeleteMapping
     public void deleteValue(@RequestBody ValueIdDto valueIdDto){
         valueService.deleteValue(valueMapper.fromValueIdDto(valueIdDto));
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @DeleteMapping("/all")
     public void deleteAllValues(){
         valueService.deleteAllValues();
