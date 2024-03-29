@@ -10,5 +10,6 @@ import ru.ulstu.model.ValueId;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ValueMapper {
     ValueDto toValueDto(Value value);
+    Value fromValueDto(ValueDto valueDto);
     ValueId fromValueIdDto(ValueIdDto valueIdDto);
 }

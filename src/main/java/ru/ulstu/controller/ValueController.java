@@ -53,6 +53,17 @@ public class ValueController {
     }
 
     @SecurityRequirement(name = "Bearer Authentication")
+    @PostMapping("/list")
+    public List<ValueDto> addValuesList(@RequestBody List<ValueDto> valueDtoList) {
+        return valueService.addValuesList(valueDtoList.stream()
+                .map(valueDto -> valueMapper.fromValueDto(valueDto))
+                .toList())
+                .stream()
+                .map(value -> valueMapper.toValueDto(value))
+                .toList();
+    }
+
+    @SecurityRequirement(name = "Bearer Authentication")
     @PutMapping
     public ValueDto updateValue(@RequestBody ValueDto valueDto){
         return valueMapper.toValueDto(valueService.updateValue(

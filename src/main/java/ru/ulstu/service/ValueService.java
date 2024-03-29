@@ -43,6 +43,13 @@ public class ValueService {
     }
 
     @Transactional
+    public List<Value> addValuesList(List<Value> values){
+        return values.stream()
+                .map(value -> addValue(value.getId(), value.getValue()))
+                .toList();
+    }
+
+    @Transactional
     public Value addValue(ValueId valueId, float val){
         OPOP opop = opopService.findOpopById(valueId.getOpopId());
         Variable variable = variableService.findVariableByKey(valueId.getVariableKey());

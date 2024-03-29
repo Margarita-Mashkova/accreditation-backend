@@ -7,6 +7,7 @@ import ru.ulstu.dto.OPOPDto;
 import ru.ulstu.dto.UserDto;
 import ru.ulstu.mapper.OPOPMapper;
 import ru.ulstu.mapper.UserMapper;
+import ru.ulstu.model.enums.Role;
 import ru.ulstu.service.UserService;
 
 import java.util.List;
@@ -47,6 +48,18 @@ public class UserController {
     @GetMapping("/{id}")
     public UserDto findUser(@PathVariable Long id){
         return userMapper.toUserDto(userService.findUserById(id));
+    }
+
+    @SecurityRequirement(name = "Bearer Authentication")
+    @GetMapping("/roles")
+    public List<Role> findAllRoles(){
+        return userService.findAllRoles();
+    }
+
+    @SecurityRequirement(name = "Bearer Authentication")
+    @GetMapping("/find")
+    public UserDto findUserByLogin(@RequestParam String login){
+        return userMapper.toUserDto(userService.findUserByLogin(login));
     }
 
     @SecurityRequirement(name = "Bearer Authentication")

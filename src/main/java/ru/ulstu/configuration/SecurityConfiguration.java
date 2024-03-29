@@ -33,6 +33,7 @@ public class SecurityConfiguration implements WebMvcConfigurer {
 
                         .requestMatchers("/edit-profile", "/me").authenticated()
 
+                        .requestMatchers(HttpMethod.GET,"/user**").hasAnyRole("DEAN", "ADMIN")
                         .requestMatchers("/user**").hasRole("ADMIN")
 
                         .requestMatchers("/value**").hasAnyRole("DEAN", "MANAGER")

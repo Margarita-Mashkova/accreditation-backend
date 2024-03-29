@@ -9,5 +9,7 @@ public class CalculationDto {
     private float value;
     private int score;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String indicatorName;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private boolean planned;
 }

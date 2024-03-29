@@ -3,10 +3,7 @@ package ru.ulstu.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.ulstu.model.Calculation;
-import ru.ulstu.model.CalculationId;
-import ru.ulstu.model.Indicator;
-import ru.ulstu.model.OPOP;
+import ru.ulstu.model.*;
 import ru.ulstu.repository.CalculationRepository;
 import ru.ulstu.service.exception.CalculationNotFoundException;
 import ru.ulstu.util.validation.ValidatorUtil;
@@ -24,6 +21,8 @@ public class CalculationService {
     @Autowired
     private OPOPService opopService;
     @Autowired
+    private ValueService valueService;
+    @Autowired
     private IndicatorService indicatorService;
 
     @Transactional(readOnly = true)
@@ -39,7 +38,12 @@ public class CalculationService {
 
     @Transactional(readOnly = true)
     public List<Calculation> findCalculationsByOpopAndDate(Long opopId, Date date){
-        return calculationRepository.findAllByOpopIdAndIdDate(opopId, date);
+        return calculationRepository.findAllByOpopIdAndIdDateOrderByIdIndicatorKey(opopId, date);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Calculation> findCalculationsByPeriod(Long opopId, Date dateStart, Date dateEnd){
+        return calculationRepository.findAllByOpopIdAndIdDateBetweenOrderByIdIndicatorKeyAscIdDateAsc(opopId, dateStart, dateEnd);
     }
 
     @Transactional
@@ -49,6 +53,20 @@ public class CalculationService {
         Calculation calculation = new Calculation(calculationId, indicator, opop, value, score);
         validatorUtil.validate(calculation);
         return calculationRepository.save(calculation);
+    }
+
+    @Transactional
+    public Calculation makeCalculation(CalculationId calculationId){
+        OPOP opop = opopService.findOpopById(calculationId.getOpopId());
+        Indicator indicator = indicatorService.findIndicatorByKey(calculationId.getIndicatorKey());
+        List<Value> values = valueService.findValuesByOpopAndDate(calculationId.getOpopId(), calculationId.getDate());
+
+        float value = 100;
+        int score = 60;
+        Calculation calculation = new Calculation(calculationId, indicator, opop, value, score);
+        //validatorUtil.validate(calculation);
+        //return calculationRepository.save(calculation);
+        return calculation;
     }
 
     @Transactional

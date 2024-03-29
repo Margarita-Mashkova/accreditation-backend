@@ -38,6 +38,16 @@ public class CalculationController {
     }
 
     @SecurityRequirement(name = "Bearer Authentication")
+    @GetMapping("/analysis")
+    public List<CalculationDto> findCalculationsByPeriod(@RequestParam Long opopId,
+            @RequestParam @DateTimeFormat(pattern= "yyyy-MM-dd") Date dateStart,
+            @RequestParam @DateTimeFormat(pattern= "yyyy-MM-dd") Date dateEnd){
+        return calculationService.findCalculationsByPeriod(opopId, dateStart, dateEnd).stream()
+                .map(calculation -> calculationMapper.toCalculationDto(calculation))
+                .toList();
+    }
+
+    @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping
     public CalculationDto findCalculation(@RequestParam Long opopId, @RequestParam String indicatorKey,
                                           @RequestParam @DateTimeFormat(pattern= "yyyy-MM-dd") Date date){
@@ -52,6 +62,13 @@ public class CalculationController {
         return calculationMapper.toCalculationDto(calculationService.addCalculation(
                 calculationMapper.fromCalculationIdDto(calculationDto.getId()),
                 calculationDto.getValue(), calculationDto.getScore()));
+    }
+
+    @SecurityRequirement(name = "Bearer Authentication")
+    @PostMapping("/test")
+    public CalculationDto makeCalculation(@RequestBody CalculationIdDto calculationIdDto){
+        return calculationMapper.toCalculationDto(calculationService.makeCalculation(
+                calculationMapper.fromCalculationIdDto(calculationIdDto)));
     }
 
     @SecurityRequirement(name = "Bearer Authentication")

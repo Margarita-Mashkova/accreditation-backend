@@ -16,6 +16,8 @@ import ru.ulstu.service.exception.WrongLoginOrPasswordException;
 import ru.ulstu.util.jwt.JwtProvider;
 import ru.ulstu.util.validation.ValidatorUtil;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +31,11 @@ public class UserService implements UserDetailsService {
     private ValidatorUtil validatorUtil;
     @Autowired
     private JwtProvider jwtProvider;
+
+    @Transactional(readOnly = true)
+    public List<Role> findAllRoles(){
+        return new ArrayList<Role>(Arrays.asList(Role.values()));
+    }
 
     @Transactional(readOnly = true)
     public List<User> findAllUsers() {
@@ -88,7 +95,9 @@ public class UserService implements UserDetailsService {
                 throw new UserLoginAlreadyExistsException(login);
             }
         }
-        userDB.setPassword(passwordEncoder.encode(password));
+        if(password != null && !password.equals("")) {
+            userDB.setPassword(passwordEncoder.encode(password));
+        }
         if (role != null)
             userDB.setRole(role);
         /*if (opops != null){
