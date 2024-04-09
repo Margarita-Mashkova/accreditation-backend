@@ -1,6 +1,10 @@
 package ru.ulstu.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.ulstu.model.Variable;
@@ -8,6 +12,7 @@ import ru.ulstu.repository.VariableRepository;
 import ru.ulstu.service.exception.VariableNotFoundException;
 import ru.ulstu.util.validation.ValidatorUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +22,7 @@ public class VariableService {
     private VariableRepository variableRepository;
     @Autowired
     private ValidatorUtil validatorUtil;
+    private int pageAmount;
 
     @Transactional(readOnly = true)
     public Variable findVariableByKey(String key){
@@ -27,6 +33,22 @@ public class VariableService {
     @Transactional(readOnly = true)
     public List<Variable> findAllVariables(){
         return variableRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Variable> findAllVariablesByPage(int page){
+        Pageable pageWithFiveElements = PageRequest.of(page-1, 5, Sort.by(Sort.Direction.ASC, "key"));
+        Page<Variable> variables = variableRepository.findAll(pageWithFiveElements);
+        pageAmount = variables.getTotalPages();
+        List<Variable> variableList = new ArrayList<>();
+        if(variables.hasContent()) {
+            variableList = variables.getContent();
+        }
+        return variableList;
+    }
+
+    public int getAmountPages(){
+        return pageAmount;
     }
 
     @Transactional
