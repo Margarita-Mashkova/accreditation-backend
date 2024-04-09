@@ -34,7 +34,12 @@ public class OPOPService {
     }
 
     @Transactional(readOnly = true)
-    public List<OPOP> findAllOpops(int page){
+    public List<OPOP> findAllOpops(){
+        return opopRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
+    }
+
+    @Transactional(readOnly = true)
+    public List<OPOP> findAllOpopsByPage(int page){
         Pageable pageWithFiveElements = PageRequest.of(page-1, 5, Sort.by(Sort.Direction.ASC, "id"));
         Page<OPOP> opops = opopRepository.findAll(pageWithFiveElements);
         pageAmount = opops.getTotalPages();

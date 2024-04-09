@@ -31,7 +31,12 @@ public class IndicatorService {
     }
 
     @Transactional(readOnly = true)
-    public List<Indicator> findAllIndicators(int page){
+    public List<Indicator> findAllIndicators(){
+        return indicatorRepository.findAll(Sort.by(Sort.Direction.ASC, "key"));
+    }
+
+    @Transactional(readOnly = true)
+    public List<Indicator> findAllIndicatorsByPage(int page){
         Pageable pageWithThreeElements = PageRequest.of(page-1, 3, Sort.by(Sort.Direction.ASC, "key"));
         Page<Indicator> indicators = indicatorRepository.findAll(pageWithThreeElements);
         pageAmount = indicators.getTotalPages();

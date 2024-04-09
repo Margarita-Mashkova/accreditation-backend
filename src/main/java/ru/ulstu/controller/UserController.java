@@ -3,7 +3,6 @@ package ru.ulstu.controller;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.ulstu.dto.OPOPDto;
 import ru.ulstu.dto.UserDto;
 import ru.ulstu.mapper.OPOPMapper;
 import ru.ulstu.mapper.UserMapper;
@@ -38,8 +37,16 @@ public class UserController {
 
     @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping
-    public List<UserDto> findAllUsers(@RequestParam int pageNumber){
-        return userService.findAllUsers(pageNumber).stream()
+    public List<UserDto> findAllUsers(){
+        return userService.findAllUsers().stream()
+                .map(user -> userMapper.toUserDto(user))
+                .toList();
+    }
+
+    @SecurityRequirement(name = "Bearer Authentication")
+    @GetMapping("/page")
+    public List<UserDto> findAllUsersByPage(@RequestParam int pageNumber){
+        return userService.findAllUsersByPage(pageNumber).stream()
                 .map(user -> userMapper.toUserDto(user))
                 .toList();
     }
