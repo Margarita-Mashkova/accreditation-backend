@@ -19,10 +19,16 @@ public class OPOPController {
 
     @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping
-    public List<OPOPDto> findAllOpops(){
-        return opopService.findAllOpops().stream()
+    public List<OPOPDto> findAllOpops(@RequestParam int pageNumber){
+        return opopService.findAllOpops(pageNumber).stream()
                 .map(opop -> opopMapper.toOPOPDto(opop))
                 .toList();
+    }
+
+    @SecurityRequirement(name = "Bearer Authentication")
+    @GetMapping("/pages")
+    public int getAmountPages(){
+        return opopService.getAmountPages();
     }
 
     @SecurityRequirement(name = "Bearer Authentication")

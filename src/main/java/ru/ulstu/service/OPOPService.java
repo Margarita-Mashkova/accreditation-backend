@@ -1,6 +1,10 @@
 package ru.ulstu.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.ulstu.model.OPOP;
@@ -9,6 +13,7 @@ import ru.ulstu.repository.OPOPRepository;
 import ru.ulstu.service.exception.OPOPNotFoundException;
 import ru.ulstu.util.validation.ValidatorUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +25,7 @@ public class OPOPService {
     private UserService userService;
     @Autowired
     private ValidatorUtil validatorUtil;
+    private int pageAmount;
 
     @Transactional(readOnly = true)
     public OPOP findOpopById(Long id){
@@ -28,8 +34,19 @@ public class OPOPService {
     }
 
     @Transactional(readOnly = true)
-    public List<OPOP> findAllOpops(){
-        return opopRepository.findAll();
+    public List<OPOP> findAllOpops(int page){
+        Pageable pageWithFiveElements = PageRequest.of(page-1, 5, Sort.by(Sort.Direction.ASC, "id"));
+        Page<OPOP> opops = opopRepository.findAll(pageWithFiveElements);
+        pageAmount = opops.getTotalPages();
+        List<OPOP> opopList = new ArrayList<>();
+        if(opops.hasContent()) {
+            opopList = opops.getContent();
+        }
+        return opopList;
+    }
+
+    public int getAmountPages(){
+        return pageAmount;
     }
 
     @Transactional

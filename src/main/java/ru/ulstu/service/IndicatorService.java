@@ -1,6 +1,10 @@
 package ru.ulstu.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.ulstu.model.Indicator;
@@ -8,6 +12,7 @@ import ru.ulstu.repository.IndicatorRepository;
 import ru.ulstu.service.exception.IndicatorNotFoundException;
 import ru.ulstu.util.validation.ValidatorUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +22,7 @@ public class IndicatorService {
     private IndicatorRepository indicatorRepository;
     @Autowired
     private ValidatorUtil validatorUtil;
+    private int pageAmount;
 
     @Transactional(readOnly = true)
     public Indicator findIndicatorByKey(String key){
@@ -25,8 +31,19 @@ public class IndicatorService {
     }
 
     @Transactional(readOnly = true)
-    public List<Indicator> findAllIndicators(){
-        return indicatorRepository.findAll();
+    public List<Indicator> findAllIndicators(int page){
+        Pageable pageWithThreeElements = PageRequest.of(page-1, 3, Sort.by(Sort.Direction.ASC, "key"));
+        Page<Indicator> indicators = indicatorRepository.findAll(pageWithThreeElements);
+        pageAmount = indicators.getTotalPages();
+        List<Indicator> indicatorsList = new ArrayList<>();
+        if(indicators.hasContent()) {
+            indicatorsList = indicators.getContent();
+        }
+        return indicatorsList;
+    }
+
+    public int getAmountPages(){
+        return pageAmount;
     }
 
     @Transactional

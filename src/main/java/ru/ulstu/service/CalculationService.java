@@ -1,5 +1,7 @@
 package ru.ulstu.service;
 
+import net.objecthunter.exp4j.Expression;
+import net.objecthunter.exp4j.ExpressionBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,9 +10,11 @@ import ru.ulstu.repository.CalculationRepository;
 import ru.ulstu.service.exception.CalculationNotFoundException;
 import ru.ulstu.util.validation.ValidatorUtil;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import javax.script.SimpleBindings;
+import java.util.*;
 
 @Service
 public class CalculationService {
@@ -56,17 +60,44 @@ public class CalculationService {
     }
 
     @Transactional
-    public Calculation makeCalculation(CalculationId calculationId){
+    public List<Value> makeCalculation(CalculationId calculationId) {
         OPOP opop = opopService.findOpopById(calculationId.getOpopId());
         Indicator indicator = indicatorService.findIndicatorByKey(calculationId.getIndicatorKey());
-        List<Value> values = valueService.findValuesByOpopAndDate(calculationId.getOpopId(), calculationId.getDate());
 
-        float value = 100;
+        // Список значений переменных конкретной ОПОП в определенную дату
+        List<Value> values = valueService.findValuesByOpopAndDate(calculationId.getOpopId(), calculationId.getDate());
+        // Список наименований переменных
+        Set<String> vars = new HashSet<>();
+        for (Value val : values) {
+            vars.add(val.getId().getVariableKey());
+        }
+        // Формула вычисления значения показателя
+        String formula = indicator.getFormula();
+        // Создание выражения
+        Expression expression = new ExpressionBuilder(formula)
+                .variables(vars)
+                .build();
+        // Присваивание значений переменным в выражении
+        for (Value val : values) {
+            expression.setVariable(val.getId().getVariableKey(), val.getValue());
+        }
+        // Вычисление значения показателя
+        float value = ((Double) expression.evaluate()).floatValue();
+
+        // 2 способ парсить формулу
+//        ScriptEngine engine = new ScriptEngineManager().getEngineByName("graal.js");
+//        Map<String, Object> vars = new HashMap<String, Object>();
+//        for (Value val : values) {
+//            vars.put(val.getId().getVariableKey(), val.getValue());
+//        }
+//        float value = ((Double) engine.eval(formula, new SimpleBindings(vars))).floatValue();
+
+        //TODO: правила выставления балов
         int score = 60;
         Calculation calculation = new Calculation(calculationId, indicator, opop, value, score);
         //validatorUtil.validate(calculation);
         //return calculationRepository.save(calculation);
-        return calculation;
+        return values;
     }
 
     @Transactional

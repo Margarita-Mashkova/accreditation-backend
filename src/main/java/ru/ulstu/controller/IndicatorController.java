@@ -19,10 +19,16 @@ public class IndicatorController {
 
     @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping
-    public List<IndicatorDto> findAllIndicators(){
-        return indicatorService.findAllIndicators().stream()
+    public List<IndicatorDto> findAllIndicators(@RequestParam int pageNumber){
+        return indicatorService.findAllIndicators(pageNumber).stream()
                 .map(indicator -> indicatorMapper.toIndicatorDto(indicator))
                 .toList();
+    }
+
+    @SecurityRequirement(name = "Bearer Authentication")
+    @GetMapping("/pages")
+    public int getAmountPages(){
+        return indicatorService.getAmountPages();
     }
 
     @SecurityRequirement(name = "Bearer Authentication")

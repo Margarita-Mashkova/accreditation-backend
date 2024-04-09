@@ -1,12 +1,17 @@
 package ru.ulstu.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.ulstu.model.Indicator;
 import ru.ulstu.model.User;
 import ru.ulstu.model.enums.Role;
 import ru.ulstu.repository.UserRepository;
@@ -31,6 +36,7 @@ public class UserService implements UserDetailsService {
     private ValidatorUtil validatorUtil;
     @Autowired
     private JwtProvider jwtProvider;
+    private int pageAmount;
 
     @Transactional(readOnly = true)
     public List<Role> findAllRoles(){
@@ -38,8 +44,19 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional(readOnly = true)
-    public List<User> findAllUsers() {
-        return userRepository.findAll();
+    public List<User> findAllUsers(int page) {
+        Pageable pageWithFiveElements = PageRequest.of(page-1, 5, Sort.by(Sort.Direction.ASC, "key"));
+        Page<User> users = userRepository.findAll(pageWithFiveElements);
+        pageAmount = users.getTotalPages();
+        List<User> userList = new ArrayList<>();
+        if(users.hasContent()) {
+            userList = users.getContent();
+        }
+        return userList;
+    }
+
+    public int getAmountPages(){
+        return pageAmount;
     }
 
     @Transactional(readOnly = true)

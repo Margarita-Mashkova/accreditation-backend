@@ -38,10 +38,16 @@ public class UserController {
 
     @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping
-    public List<UserDto> findAllUsers(){
-        return userService.findAllUsers().stream()
+    public List<UserDto> findAllUsers(@RequestParam int pageNumber){
+        return userService.findAllUsers(pageNumber).stream()
                 .map(user -> userMapper.toUserDto(user))
                 .toList();
+    }
+
+    @SecurityRequirement(name = "Bearer Authentication")
+    @GetMapping("/pages")
+    public int getAmountPages(){
+        return userService.getAmountPages();
     }
 
     @SecurityRequirement(name = "Bearer Authentication")
