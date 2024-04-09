@@ -20,6 +20,7 @@ public class AdviceController {
             UserNotFoundException.class,
             ValueNotFoundException.class,
             CalculationNotFoundException.class,
+            RuleNotFoundException.class,
             MethodArgumentNotValidException.class
     })
     public ResponseEntity<Object> handleException(Throwable e) {

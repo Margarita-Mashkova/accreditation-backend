@@ -4,13 +4,15 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 @Data
 @Entity
 @NoArgsConstructor
 @RequiredArgsConstructor
 public class Indicator {
-
-    //TODO: String?
     @Id
     @Column(unique = true)
     @NonNull
@@ -23,4 +25,9 @@ public class Indicator {
     @NonNull
     @NotBlank(message = "Indicator formula can't be null or empty")
     private String formula;
+
+    @NonNull
+    @OneToMany
+    @JoinColumn(name = "indicator_key")
+    private List<Rule> rules;
 }

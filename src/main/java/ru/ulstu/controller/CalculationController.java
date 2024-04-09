@@ -64,12 +64,13 @@ public class CalculationController {
                 calculationDto.getValue(), calculationDto.getScore()));
     }
 
-    /*@SecurityRequirement(name = "Bearer Authentication")
+    //TODO:delete
+    @SecurityRequirement(name = "Bearer Authentication")
     @PostMapping("/test")
     public CalculationDto makeCalculation(@RequestBody CalculationIdDto calculationIdDto){
         return calculationMapper.toCalculationDto(calculationService.makeCalculation(
                 calculationMapper.fromCalculationIdDto(calculationIdDto)));
-    }*/
+    }
 
     @SecurityRequirement(name = "Bearer Authentication")
     @PutMapping

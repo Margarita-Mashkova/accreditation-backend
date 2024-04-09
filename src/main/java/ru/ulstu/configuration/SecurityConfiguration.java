@@ -54,6 +54,11 @@ public class SecurityConfiguration implements WebMvcConfigurer {
                         .requestMatchers(HttpMethod.POST,"/variable**").hasRole("DEAN")
                         .requestMatchers(HttpMethod.DELETE,"/variable**").hasRole("DEAN")
 
+                        .requestMatchers(HttpMethod.GET,"/rule**").hasAnyRole("DEAN", "MANAGER")
+                        .requestMatchers(HttpMethod.PUT,"/rule**").hasRole("DEAN")
+                        .requestMatchers(HttpMethod.POST,"/rule**").hasRole("DEAN")
+                        .requestMatchers(HttpMethod.DELETE,"/rule**").hasRole("DEAN")
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

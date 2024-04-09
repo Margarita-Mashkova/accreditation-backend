@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.ulstu.dto.IndicatorDto;
 import ru.ulstu.mapper.IndicatorMapper;
+import ru.ulstu.mapper.RuleMapper;
 import ru.ulstu.service.IndicatorService;
 
 import java.util.List;
@@ -16,6 +17,8 @@ public class IndicatorController {
     private IndicatorService indicatorService;
     @Autowired
     private IndicatorMapper indicatorMapper;
+    @Autowired
+    private RuleMapper ruleMapper;
 
     @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping
@@ -49,14 +52,20 @@ public class IndicatorController {
     @PostMapping
     public IndicatorDto createIndicator(@RequestBody IndicatorDto indicatorDto){
         return indicatorMapper.toIndicatorDto(indicatorService.addIndicator(indicatorDto.getKey(),
-                indicatorDto.getName(), indicatorDto.getFormula()));
+                indicatorDto.getName(), indicatorDto.getFormula(),
+                indicatorDto.getRules().stream()
+                        .map(ruleDto -> ruleMapper.fromRuleDto(ruleDto))
+                        .toList()));
     }
 
     @SecurityRequirement(name = "Bearer Authentication")
     @PutMapping
     public IndicatorDto updateIndicator(@RequestBody IndicatorDto indicatorDto){
         return indicatorMapper.toIndicatorDto(indicatorService.editIndicator(indicatorDto.getKey(),
-                indicatorDto.getName(), indicatorDto.getFormula()));
+                indicatorDto.getName(), indicatorDto.getFormula(),
+                indicatorDto.getRules().stream()
+                        .map(ruleDto -> ruleMapper.fromRuleDto(ruleDto))
+                        .toList()));
     }
 
     @SecurityRequirement(name = "Bearer Authentication")

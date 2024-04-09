@@ -4,16 +4,11 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-import ru.ulstu.dto.CalculationDto;
-import ru.ulstu.dto.CalculationIdDto;
 import ru.ulstu.dto.ValueDto;
 import ru.ulstu.dto.ValueIdDto;
-import ru.ulstu.mapper.CalculationMapper;
 import ru.ulstu.mapper.ValueMapper;
-import ru.ulstu.service.CalculationService;
 import ru.ulstu.service.ValueService;
 
-import javax.script.ScriptException;
 import java.util.Date;
 import java.util.List;
 
@@ -24,13 +19,6 @@ public class ValueController {
     private ValueService valueService;
     @Autowired
     private ValueMapper valueMapper;
-
-
-    //TODO: delete
-    @Autowired
-    private CalculationService calculationService;
-    @Autowired
-    private CalculationMapper calculationMapper;
 
     @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping("/all")
@@ -92,15 +80,5 @@ public class ValueController {
     @DeleteMapping("/all")
     public void deleteAllValues(){
         valueService.deleteAllValues();
-    }
-
-
-    //TODO: delete
-    @SecurityRequirement(name = "Bearer Authentication")
-    @PostMapping("/test")
-    public List<ValueDto> makeCalculation(@RequestBody CalculationIdDto calculationIdDto) {
-        return calculationService.makeCalculation(calculationMapper.fromCalculationIdDto(calculationIdDto)).stream()
-                .map(value -> valueMapper.toValueDto(value))
-                .toList();
     }
 }

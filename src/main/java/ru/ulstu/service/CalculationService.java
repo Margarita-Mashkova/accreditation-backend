@@ -60,7 +60,7 @@ public class CalculationService {
     }
 
     @Transactional
-    public List<Value> makeCalculation(CalculationId calculationId) {
+    public Calculation makeCalculation(CalculationId calculationId) {
         OPOP opop = opopService.findOpopById(calculationId.getOpopId());
         Indicator indicator = indicatorService.findIndicatorByKey(calculationId.getIndicatorKey());
 
@@ -92,12 +92,41 @@ public class CalculationService {
 //        }
 //        float value = ((Double) engine.eval(formula, new SimpleBindings(vars))).floatValue();
 
-        //TODO: правила выставления балов
-        int score = 60;
+        // Выставления баллов полученному значению
+        int score = 0;
+        List<Rule> scoreRules = indicator.getRules();
+        if (scoreRules.size() > 1) {
+            //TODO: подкорректировать условия на пограничные значения
+            for (Rule rule : scoreRules) {
+                // менее min
+                if (rule.getMin() == null) {
+                    if (value < rule.getMax()) {
+                        score = rule.getScore();
+                    }
+                }
+                // max и более
+                else if (rule.getMax() == null) {
+                    if (value >= rule.getMin()) {
+                        score = rule.getScore();
+                    }
+                }
+                // от min и до max
+                else {
+                    if ((value >= rule.getMin()) && (value < rule.getMax())) {
+                        score = rule.getScore();
+                    }
+                }
+            }
+        }
+        else {
+            throw new RuntimeException(String.format("The scoring rules for the indicator [%s] are not set",
+                    indicator.getKey()));
+        }
+
         Calculation calculation = new Calculation(calculationId, indicator, opop, value, score);
-        //validatorUtil.validate(calculation);
+        validatorUtil.validate(calculation);
         //return calculationRepository.save(calculation);
-        return values;
+        return calculation;
     }
 
     @Transactional

@@ -23,7 +23,7 @@ public class ProfileController {
     @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping("/me")
     public UserDto me(@AuthenticationPrincipal User user) {
-        System.out.println(SecurityContextHolder.getContext().getAuthentication().getAuthorities());
+        //System.out.println(SecurityContextHolder.getContext().getAuthentication().getAuthorities());
         return userMapper.toUserDto(user);
     }
 

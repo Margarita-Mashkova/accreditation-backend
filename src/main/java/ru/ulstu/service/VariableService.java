@@ -32,7 +32,7 @@ public class VariableService {
 
     @Transactional(readOnly = true)
     public List<Variable> findAllVariables(){
-        return variableRepository.findAll();
+        return variableRepository.findAll(Sort.by(Sort.Direction.ASC, "key"));
     }
 
     @Transactional(readOnly = true)
