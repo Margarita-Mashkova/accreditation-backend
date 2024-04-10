@@ -21,6 +21,8 @@ public class AdviceController {
             ValueNotFoundException.class,
             CalculationNotFoundException.class,
             RuleNotFoundException.class,
+            ScoringRulesNotSetException.class,
+            ReportCalculationException.class,
             MethodArgumentNotValidException.class
     })
     public ResponseEntity<Object> handleException(Throwable e) {

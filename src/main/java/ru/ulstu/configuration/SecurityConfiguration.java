@@ -38,6 +38,7 @@ public class SecurityConfiguration implements WebMvcConfigurer {
 
                         .requestMatchers("/value**").hasAnyRole("DEAN", "MANAGER")
                         .requestMatchers("/calculation**").hasAnyRole("DEAN", "MANAGER")
+                        .requestMatchers("/report**").hasAnyRole("DEAN", "MANAGER")
 
                         .requestMatchers(HttpMethod.GET,"/opop**").hasAnyRole("DEAN", "MANAGER")
                         .requestMatchers(HttpMethod.PUT, "/opop**").hasRole("DEAN")

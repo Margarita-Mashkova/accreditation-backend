@@ -8,12 +8,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.ulstu.model.*;
 import ru.ulstu.repository.CalculationRepository;
 import ru.ulstu.service.exception.CalculationNotFoundException;
+import ru.ulstu.service.exception.ReportCalculationException;
+import ru.ulstu.service.exception.ScoringRulesNotSetException;
 import ru.ulstu.util.validation.ValidatorUtil;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-import javax.script.SimpleBindings;
 import java.util.*;
 
 @Service
@@ -60,31 +58,32 @@ public class CalculationService {
     }
 
     @Transactional
-    public Calculation makeCalculation(CalculationId calculationId) {
+    public Calculation calculateIndicator(CalculationId calculationId) {
         OPOP opop = opopService.findOpopById(calculationId.getOpopId());
         Indicator indicator = indicatorService.findIndicatorByKey(calculationId.getIndicatorKey());
 
         // Список значений переменных конкретной ОПОП в определенную дату
         List<Value> values = valueService.findValuesByOpopAndDate(calculationId.getOpopId(), calculationId.getDate());
-        // Список наименований переменных
-        Set<String> vars = new HashSet<>();
-        for (Value val : values) {
-            vars.add(val.getId().getVariableKey());
-        }
-        // Формула вычисления значения показателя
-        String formula = indicator.getFormula();
-        // Создание выражения
-        Expression expression = new ExpressionBuilder(formula)
-                .variables(vars)
-                .build();
-        // Присваивание значений переменным в выражении
-        for (Value val : values) {
-            expression.setVariable(val.getId().getVariableKey(), val.getValue());
-        }
-        // Вычисление значения показателя
-        float value = ((Double) expression.evaluate()).floatValue();
+        if(values.size() != 0) {
+            // Список наименований переменных
+            Set<String> vars = new HashSet<>();
+            for (Value val : values) {
+                vars.add(val.getId().getVariableKey());
+            }
+            // Формула вычисления значения показателя
+            String formula = indicator.getFormula();
+            // Создание выражения
+            Expression expression = new ExpressionBuilder(formula)
+                    .variables(vars)
+                    .build();
+            // Присваивание значений переменным в выражении
+            for (Value val : values) {
+                expression.setVariable(val.getId().getVariableKey(), val.getValue());
+            }
+            // Вычисление значения показателя
+            float value = ((Double) expression.evaluate()).floatValue();
 
-        // 2 способ парсить формулу
+            // 2 способ парсить формулу
 //        ScriptEngine engine = new ScriptEngineManager().getEngineByName("graal.js");
 //        Map<String, Object> vars = new HashMap<String, Object>();
 //        for (Value val : values) {
@@ -92,41 +91,54 @@ public class CalculationService {
 //        }
 //        float value = ((Double) engine.eval(formula, new SimpleBindings(vars))).floatValue();
 
-        // Выставления баллов полученному значению
-        int score = 0;
-        List<Rule> scoreRules = indicator.getRules();
-        if (scoreRules.size() > 1) {
-            //TODO: подкорректировать условия на пограничные значения
-            for (Rule rule : scoreRules) {
-                // менее min
-                if (rule.getMin() == null) {
-                    if (value < rule.getMax()) {
-                        score = rule.getScore();
+            // Выставления баллов полученному значению
+            int score = 0;
+            List<Rule> scoreRules = indicator.getRules();
+            if (scoreRules.size() > 1) {
+                //TODO: подкорректировать условия на пограничные значения
+                for (Rule rule : scoreRules) {
+                    // менее min
+                    if (rule.getMin() == null) {
+                        if (value < rule.getMax()) {
+                            score = rule.getScore();
+                        }
+                    }
+                    // max и более
+                    else if (rule.getMax() == null) {
+                        if (value >= rule.getMin()) {
+                            score = rule.getScore();
+                        }
+                    }
+                    // от min и до max
+                    else {
+                        if ((value >= rule.getMin()) && (value < rule.getMax())) {
+                            score = rule.getScore();
+                        }
                     }
                 }
-                // max и более
-                else if (rule.getMax() == null) {
-                    if (value >= rule.getMin()) {
-                        score = rule.getScore();
-                    }
-                }
-                // от min и до max
-                else {
-                    if ((value >= rule.getMin()) && (value < rule.getMax())) {
-                        score = rule.getScore();
-                    }
-                }
+            } else {
+                throw new ScoringRulesNotSetException(indicator.getKey());
             }
+
+            Calculation calculation = new Calculation(calculationId, indicator, opop, value, score);
+            validatorUtil.validate(calculation);
+            return calculationRepository.save(calculation);
         }
         else {
-            throw new RuntimeException(String.format("The scoring rules for the indicator [%s] are not set",
-                    indicator.getKey()));
+            throw new ReportCalculationException();
         }
+    }
 
-        Calculation calculation = new Calculation(calculationId, indicator, opop, value, score);
-        validatorUtil.validate(calculation);
-        //return calculationRepository.save(calculation);
-        return calculation;
+    @Transactional
+    public List<Calculation> makeCalculationReport(Long opopId, Date date) {
+        List<Indicator> indicatorList = indicatorService.findAllIndicators();
+        List<Calculation> calculations = new ArrayList<>();
+        for (Indicator indicator : indicatorList) {
+            CalculationId calculationId = new CalculationId(opopId, indicator.getKey(), date);
+            Calculation calculatedIndicator = calculateIndicator(calculationId);
+            calculations.add(calculatedIndicator);
+        }
+        return calculations;
     }
 
     @Transactional
