@@ -46,15 +46,22 @@ public class OPOPController {
     }
 
     @SecurityRequirement(name = "Bearer Authentication")
+    @GetMapping("/levels")
+    public List<String> findAllOpopsLevels(){
+        return opopService.findAllOpopLevels();
+    }
+
+    @SecurityRequirement(name = "Bearer Authentication")
     @PostMapping
-    public OPOPDto createOpop(@RequestParam String name, @RequestParam Long userId){
-        return opopMapper.toOPOPDto(opopService.addOpop(name, userId));
+    public OPOPDto createOpop(@RequestParam String name, @RequestParam String level, @RequestParam Long userId){
+        return opopMapper.toOPOPDto(opopService.addOpop(name, level, userId));
     }
 
     @SecurityRequirement(name = "Bearer Authentication")
     @PutMapping("/{id}")
-    public OPOPDto updateOpop(@PathVariable Long id, @RequestParam String name, @RequestParam Long userId){
-        return opopMapper.toOPOPDto(opopService.editOPOP(id, name, userId));
+    public OPOPDto updateOpop(@PathVariable Long id, @RequestParam String name, @RequestParam String level,
+                              @RequestParam Long userId){
+        return opopMapper.toOPOPDto(opopService.editOPOP(id, name, level, userId));
     }
 
     @SecurityRequirement(name = "Bearer Authentication")

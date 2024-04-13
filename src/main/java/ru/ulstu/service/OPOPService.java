@@ -14,6 +14,7 @@ import ru.ulstu.service.exception.OPOPNotFoundException;
 import ru.ulstu.util.validation.ValidatorUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,18 +55,24 @@ public class OPOPService {
         return pageAmount;
     }
 
+    public List<String> findAllOpopLevels(){
+        return Arrays.asList("Бакалавриат", "Специалитет", "Магистратура", "Ординатура",
+                "Ассистентура-стажировка");
+    }
+
     @Transactional
-    public OPOP addOpop(String name, Long userId){
+    public OPOP addOpop(String name, String level, Long userId){
         final User user = userService.findUserById(userId);
-        OPOP opop = new OPOP(name, user);
+        OPOP opop = new OPOP(name, level, user);
         validatorUtil.validate(opop);
         return opopRepository.save(opop);
     }
 
     @Transactional
-    public OPOP editOPOP(Long id, String name, Long userId){
+    public OPOP editOPOP(Long id, String name, String level, Long userId){
         OPOP opopDB = findOpopById(id);
         opopDB.setName(name);
+        opopDB.setLevel(level);
         User user = userService.findUserById(userId);
         opopDB.setUser(user);
         validatorUtil.validate(opopDB);

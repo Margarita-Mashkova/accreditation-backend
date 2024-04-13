@@ -18,6 +18,9 @@ public class OPOP {
     @Column(unique = true)
     private String name;
 
+    @NonNull
+    private String level;
+    
     @ManyToOne
     @JoinColumn(name = "user_id")
     @NonNull

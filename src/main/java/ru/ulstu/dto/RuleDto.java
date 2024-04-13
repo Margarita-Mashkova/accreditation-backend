@@ -8,4 +8,5 @@ public class RuleDto {
     private Integer max;
     private int score;
     private String indicatorKey;
+    private String level;
 }

@@ -59,7 +59,7 @@ public class IndicatorService {
     public Indicator addIndicator(String key, String name, String formula, List<Rule> rules) {
         List<Rule> addedRules = new ArrayList<>();
         for (Rule rule : rules) {
-            addedRules.add(ruleService.addRule(rule.getMin(), rule.getMax(), rule.getScore()));
+            addedRules.add(ruleService.addRule(rule.getMin(), rule.getMax(), rule.getScore(), rule.getLevel()));
         }
         Indicator indicator = new Indicator(key, name, formula, addedRules);
         validatorUtil.validate(indicator);
@@ -74,7 +74,7 @@ public class IndicatorService {
         ruleService.deleteAllByIndicatorKey(key);
         List<Rule> addedRules = new ArrayList<>();
         for (Rule rule : rules) {
-            addedRules.add(ruleService.addRule(rule.getMin(), rule.getMax(), rule.getScore()));
+            addedRules.add(ruleService.addRule(rule.getMin(), rule.getMax(), rule.getScore(), rule.getLevel()));
         }
         indicatorDB.setRules(addedRules);
         validatorUtil.validate(indicatorDB);

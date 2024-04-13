@@ -40,16 +40,24 @@ public class RuleController {
     }
 
     @SecurityRequirement(name = "Bearer Authentication")
+    @GetMapping("/levels")
+    public List<String> findAllRuleLevels(){
+        return ruleService.findAllRuleLevels();
+    }
+
+    @SecurityRequirement(name = "Bearer Authentication")
     @PostMapping
     public RuleDto createRule(@RequestBody RuleDto ruleDto){
-        return ruleMapper.toRuleDto(ruleService.addRule(ruleDto.getMin(), ruleDto.getMax(), ruleDto.getScore()));
+        return ruleMapper.toRuleDto(ruleService.addRule(ruleDto.getMin(), ruleDto.getMax(), ruleDto.getScore(),
+                ruleDto.getLevel()));
     }
 
     @SecurityRequirement(name = "Bearer Authentication")
     @PutMapping("/{id}")
     public RuleDto updateRule(@PathVariable Long id, @RequestParam(required = false) Integer min,
-                              @RequestParam(required = false) Integer max, @RequestParam int score){
-        return ruleMapper.toRuleDto(ruleService.editRule(id, min, max, score));
+                              @RequestParam(required = false) Integer max, @RequestParam int score,
+                              @RequestParam String level){
+        return ruleMapper.toRuleDto(ruleService.editRule(id, min, max, score, level));
     }
 
     @SecurityRequirement(name = "Bearer Authentication")

@@ -8,6 +8,8 @@ import ru.ulstu.repository.RuleRepository;
 import ru.ulstu.service.exception.RuleNotFoundException;
 import ru.ulstu.util.validation.ValidatorUtil;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,19 +36,24 @@ public class RuleService {
         return ruleRepository.findAllByIndicatorKey(indicatorKey);
     }
 
+    public List<String> findAllRuleLevels(){
+        return Arrays.asList("Высокий", "Средний", "Низкий");
+    }
+
     @Transactional
-    public Rule addRule(Integer min, Integer max, int score){
-        final Rule rule = new Rule(min, max, score);
+    public Rule addRule(Integer min, Integer max, int score, String level){
+        final Rule rule = new Rule(min, max, score, level);
         validatorUtil.validate(rule);
         return ruleRepository.save(rule);
     }
 
     @Transactional
-    public Rule editRule(Long id, Integer min, Integer max, int score){
+    public Rule editRule(Long id, Integer min, Integer max, int score, String level){
         Rule ruleDB = findRuleById(id);
         ruleDB.setMin(min);
         ruleDB.setMax(max);
         ruleDB.setScore(score);
+        ruleDB.setLevel(level);
         validatorUtil.validate(ruleDB);
         return ruleRepository.save(ruleDB);
     }

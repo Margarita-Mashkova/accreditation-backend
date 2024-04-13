@@ -16,5 +16,6 @@ public class Variable {
 
     @NonNull
     @NotBlank(message = "Variable name can't be null or empty")
+    @Column(length = 400)
     private String name;
 }

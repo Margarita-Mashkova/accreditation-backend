@@ -20,6 +20,7 @@ public class Indicator {
 
     @NonNull
     @NotBlank(message = "Indicator name can't be null or empty")
+    @Column(length = 600)
     private String name;
 
     @NonNull
