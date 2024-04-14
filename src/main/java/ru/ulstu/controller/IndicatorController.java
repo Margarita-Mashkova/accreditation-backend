@@ -53,6 +53,7 @@ public class IndicatorController {
     public IndicatorDto createIndicator(@RequestBody IndicatorDto indicatorDto){
         return indicatorMapper.toIndicatorDto(indicatorService.addIndicator(indicatorDto.getKey(),
                 indicatorDto.getName(), indicatorDto.getFormula(),
+                indicatorDto.isBoolType(), indicatorDto.isBoolValue(),
                 indicatorDto.getRules().stream()
                         .map(ruleDto -> ruleMapper.fromRuleDto(ruleDto))
                         .toList()));
@@ -63,6 +64,7 @@ public class IndicatorController {
     public IndicatorDto updateIndicator(@RequestBody IndicatorDto indicatorDto){
         return indicatorMapper.toIndicatorDto(indicatorService.editIndicator(indicatorDto.getKey(),
                 indicatorDto.getName(), indicatorDto.getFormula(),
+                indicatorDto.isBoolType(), indicatorDto.isBoolValue(),
                 indicatorDto.getRules().stream()
                         .map(ruleDto -> ruleMapper.fromRuleDto(ruleDto))
                         .toList()));

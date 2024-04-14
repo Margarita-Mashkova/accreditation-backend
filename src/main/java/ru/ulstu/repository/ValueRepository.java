@@ -9,4 +9,5 @@ import java.util.List;
 
 public interface ValueRepository extends JpaRepository<Value, ValueId> {
     List<Value> findAllByOpopIdAndIdDate(Long opopId, Date date);
+    List<Value> findAllByOpopId(Long opopId);
 }

@@ -23,12 +23,26 @@ public class Indicator {
     @Column(length = 600)
     private String name;
 
-    @NonNull
     @NotBlank(message = "Indicator formula can't be null or empty")
     private String formula;
+
+    @Column(columnDefinition = "boolean default false")
+    private boolean boolType;
+    @Column(columnDefinition = "boolean default false")
+    private boolean boolValue;
 
     @NonNull
     @OneToMany
     @JoinColumn(name = "indicator_key")
     private List<Rule> rules;
+
+    public Indicator(@NonNull String key, @NonNull String name, String formula,
+                     boolean boolType, boolean boolValue, @NonNull List<Rule> rules) {
+        this.key = key;
+        this.name = name;
+        this.formula = formula;
+        this.boolType = boolType;
+        this.boolValue = boolValue;
+        this.rules = rules;
+    }
 }

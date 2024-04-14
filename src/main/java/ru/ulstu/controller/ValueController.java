@@ -38,6 +38,12 @@ public class ValueController {
     }
 
     @SecurityRequirement(name = "Bearer Authentication")
+    @GetMapping("/by-opop")
+    public List<Date> findDatesByOpop(@RequestParam Long opopId){
+        return valueService.findDatesByOpop(opopId);
+    }
+
+    @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping
     public ValueDto findValue(@RequestParam Long opopId, @RequestParam String variableKey,
                               @RequestParam @DateTimeFormat(pattern= "yyyy-MM-dd") Date date){

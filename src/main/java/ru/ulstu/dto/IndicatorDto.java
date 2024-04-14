@@ -9,5 +9,7 @@ public class IndicatorDto {
     private String key;
     private String name;
     private String formula;
+    private boolean boolType;
+    private boolean boolValue;
     private List<RuleDto> rules;
 }

@@ -11,9 +11,7 @@ import ru.ulstu.repository.ValueRepository;
 import ru.ulstu.service.exception.ValueNotFoundException;
 import ru.ulstu.util.validation.ValidatorUtil;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ValueService {
@@ -40,6 +38,19 @@ public class ValueService {
     @Transactional(readOnly = true)
     public List<Value> findValuesByOpopAndDate(Long opopId, Date date){
         return valueRepository.findAllByOpopIdAndIdDate(opopId, date);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Date> findDatesByOpop(Long opopId){
+        List<Value> values = valueRepository.findAllByOpopId(opopId);
+        List<Date> datesWithValues = new ArrayList<>();
+        for (var value : values) {
+            if (!datesWithValues.contains(value.getId().getDate())) {
+                datesWithValues.add(value.getId().getDate());
+            }
+        }
+        datesWithValues.sort(Collections.reverseOrder());
+        return datesWithValues;
     }
 
     @Transactional

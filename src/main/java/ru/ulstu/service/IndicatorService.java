@@ -56,21 +56,38 @@ public class IndicatorService {
     }
 
     @Transactional
-    public Indicator addIndicator(String key, String name, String formula, List<Rule> rules) {
+    public Indicator addIndicator(String key, String name, String formula, boolean boolType, boolean boolValue,
+                                  List<Rule> rules) {
         List<Rule> addedRules = new ArrayList<>();
         for (Rule rule : rules) {
             addedRules.add(ruleService.addRule(rule.getMin(), rule.getMax(), rule.getScore(), rule.getLevel()));
         }
-        Indicator indicator = new Indicator(key, name, formula, addedRules);
+        String newFormula;
+        if (boolType) {
+            newFormula = String.valueOf(boolValue ? 1 : 0);
+            System.out.println(newFormula);
+        } else {
+            newFormula = formula;
+        }
+        Indicator indicator = new Indicator(key, name, newFormula, boolType, boolValue, addedRules);
         validatorUtil.validate(indicator);
         return indicatorRepository.save(indicator);
     }
 
     @Transactional
-    public Indicator editIndicator(String key, String name, String formula, List<Rule> rules){
+    public Indicator editIndicator(String key, String name, String formula, boolean boolType, boolean boolValue,
+                                   List<Rule> rules) {
         Indicator indicatorDB = findIndicatorByKey(key);
         indicatorDB.setName(name);
-        indicatorDB.setFormula(formula);
+        String newFormula;
+        if (boolType) {
+            newFormula = String.valueOf(boolValue ? 1 : 0);
+        } else {
+            newFormula = formula;
+        }
+        indicatorDB.setFormula(newFormula);
+        indicatorDB.setBoolValue(boolValue);
+        indicatorDB.setBoolType(boolType);
         ruleService.deleteAllByIndicatorKey(key);
         List<Rule> addedRules = new ArrayList<>();
         for (Rule rule : rules) {
