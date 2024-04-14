@@ -49,10 +49,10 @@ public class CalculationService {
     }
 
     @Transactional
-    public Calculation addCalculation(CalculationId calculationId, float value, int score){
+    public Calculation addCalculation(CalculationId calculationId, float value, int score, String level){
         OPOP opop = opopService.findOpopById(calculationId.getOpopId());
         Indicator indicator = indicatorService.findIndicatorByKey(calculationId.getIndicatorKey());
-        Calculation calculation = new Calculation(calculationId, indicator, opop, value, score);
+        Calculation calculation = new Calculation(calculationId, indicator, opop, value, score, level);
         validatorUtil.validate(calculation);
         return calculationRepository.save(calculation);
     }
@@ -93,6 +93,7 @@ public class CalculationService {
 
             // Выставления баллов полученному значению
             int score = 0;
+            String level = "";
             List<Rule> scoreRules = indicator.getRules();
             if (scoreRules.size() > 1) {
                 //TODO: подкорректировать условия на пограничные значения
@@ -101,18 +102,21 @@ public class CalculationService {
                     if (rule.getMin() == null) {
                         if (value < rule.getMax()) {
                             score = rule.getScore();
+                            level = rule.getLevel();
                         }
                     }
                     // max и более
                     else if (rule.getMax() == null) {
                         if (value >= rule.getMin()) {
                             score = rule.getScore();
+                            level = rule.getLevel();
                         }
                     }
                     // от min и до max
                     else {
                         if ((value >= rule.getMin()) && (value < rule.getMax())) {
                             score = rule.getScore();
+                            level = rule.getLevel();
                         }
                     }
                 }
@@ -120,7 +124,7 @@ public class CalculationService {
                 throw new ScoringRulesNotSetException(indicator.getKey());
             }
 
-            Calculation calculation = new Calculation(calculationId, indicator, opop, value, score);
+            Calculation calculation = new Calculation(calculationId, indicator, opop, value, score, level);
             validatorUtil.validate(calculation);
             return calculationRepository.save(calculation);
         }
@@ -142,7 +146,7 @@ public class CalculationService {
     }
 
     @Transactional
-    public Calculation updateCalculation(CalculationId calculationId, float value, int score){
+    public Calculation updateCalculation(CalculationId calculationId, float value, int score, String level){
         Calculation calculationDB = findCalculation(calculationId);
         OPOP opop = opopService.findOpopById(calculationId.getOpopId());
         Indicator indicator = indicatorService.findIndicatorByKey(calculationId.getIndicatorKey());
@@ -150,6 +154,7 @@ public class CalculationService {
         calculationDB.setIndicator(indicator);
         calculationDB.setValue(value);
         calculationDB.setScore(score);
+        calculationDB.setLevel(level);
         validatorUtil.validate(calculationDB);
         return calculationRepository.save(calculationDB);
     }

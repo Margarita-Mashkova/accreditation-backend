@@ -33,6 +33,9 @@ public class Calculation {
     @NonNull
     private int score;
 
+    @NonNull
+    private String level;
+
     // является ли данное значение планируемым (расчет показателей на будущие годы)
     private boolean planned;
 

@@ -8,5 +8,6 @@ public class OPOPDto {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
     private String name;
+    private String level;
     private String userLogin;
 }

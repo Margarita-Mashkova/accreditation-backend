@@ -8,6 +8,7 @@ public class CalculationDto {
     private CalculationIdDto id;
     private float value;
     private int score;
+    private String level;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String indicatorName;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

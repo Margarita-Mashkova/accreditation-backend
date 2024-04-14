@@ -61,7 +61,7 @@ public class CalculationController {
     public CalculationDto createCalculation(@RequestBody CalculationDto calculationDto){
         return calculationMapper.toCalculationDto(calculationService.addCalculation(
                 calculationMapper.fromCalculationIdDto(calculationDto.getId()),
-                calculationDto.getValue(), calculationDto.getScore()));
+                calculationDto.getValue(), calculationDto.getScore(), calculationDto.getLevel()));
     }
 
     @SecurityRequirement(name = "Bearer Authentication")
@@ -69,7 +69,7 @@ public class CalculationController {
     public CalculationDto editCalculation(@RequestBody CalculationDto calculationDto){
         return calculationMapper.toCalculationDto(calculationService.updateCalculation(
                 calculationMapper.fromCalculationIdDto(calculationDto.getId()),
-                calculationDto.getValue(), calculationDto.getScore()));
+                calculationDto.getValue(), calculationDto.getScore(), calculationDto.getLevel()));
     }
 
     @SecurityRequirement(name = "Bearer Authentication")
