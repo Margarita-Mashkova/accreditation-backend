@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.ulstu.dto.CalculationDto;
+import ru.ulstu.dto.ReportCalculationOpopDto;
 import ru.ulstu.mapper.CalculationMapper;
 import ru.ulstu.service.CalculationService;
+import ru.ulstu.service.ReportService;
 
 import java.util.Date;
 import java.util.List;
@@ -18,16 +20,20 @@ import java.util.List;
 @RequestMapping("/report")
 public class ReportController {
     @Autowired
-    private CalculationService calculationService;
-    @Autowired
-    private CalculationMapper calculationMapper;
+    private ReportService reportService;
 
     @SecurityRequirement(name = "Bearer Authentication")
-    @GetMapping
-    public List<CalculationDto> makeCalculationReport(@RequestParam Long opopId,
-                                                      @RequestParam @DateTimeFormat(pattern= "yyyy-MM-dd") Date date){
-        return calculationService.makeCalculationReport(opopId, date).stream()
-                .map(calculation -> calculationMapper.toCalculationDto(calculation))
-                .toList();
+    @GetMapping("/calculation-opop")
+    public ReportCalculationOpopDto makeCalculationOpopReport(
+            @RequestParam Long opopId,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
+        return reportService.makeCalculationOpopReport(opopId, date);
+    }
+
+    @SecurityRequirement(name = "Bearer Authentication")
+    @GetMapping("/save")
+    public void saveCalculationOpopReportExcel(@RequestParam Long opopId,
+                                               @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date date){
+        reportService.saveCalculationOpopReportExcel(opopId, date);
     }
 }

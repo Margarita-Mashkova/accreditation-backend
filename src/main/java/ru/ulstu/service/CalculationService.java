@@ -133,8 +133,9 @@ public class CalculationService {
         }
     }
 
+    // Возвращает рассчитаные значения для каждого показателя
     @Transactional
-    public List<Calculation> makeCalculationReport(Long opopId, Date date) {
+    public List<Calculation> makeCalculationData(Long opopId, Date date) {
         List<Indicator> indicatorList = indicatorService.findAllIndicators();
         List<Calculation> calculations = new ArrayList<>();
         for (Indicator indicator : indicatorList) {

@@ -41,6 +41,8 @@ dependencies {
     implementation 'org.graalvm.js:js-scriptengine:23.0.3'
 
     implementation 'net.objecthunter:exp4j:0.4.8'
+
+    implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '3.17'
 }
 
 tasks.named('test') {
