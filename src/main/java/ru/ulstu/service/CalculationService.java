@@ -45,7 +45,8 @@ public class CalculationService {
 
     @Transactional(readOnly = true)
     public List<Calculation> findCalculationsByPeriod(Long opopId, Date dateStart, Date dateEnd){
-        return calculationRepository.findAllByOpopIdAndIdDateBetweenOrderByIdIndicatorKeyAscIdDateAsc(opopId, dateStart, dateEnd);
+        return calculationRepository.findAllByOpopIdAndIdDateBetweenOrderByIdIndicatorKeyAscIdDateAsc(opopId,
+                dateStart, dateEnd);
     }
 
     @Transactional

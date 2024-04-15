@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.ulstu.dto.CalculationDto;
+import ru.ulstu.dto.ReportAnalysisOpopDto;
 import ru.ulstu.dto.ReportCalculationOpopDto;
 import ru.ulstu.mapper.CalculationMapper;
 import ru.ulstu.service.CalculationService;
@@ -31,9 +32,25 @@ public class ReportController {
     }
 
     @SecurityRequirement(name = "Bearer Authentication")
-    @GetMapping("/save")
+    @GetMapping("/calculation-opop/save")
     public void saveCalculationOpopReportExcel(@RequestParam Long opopId,
                                                @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date date){
         reportService.saveCalculationOpopReportExcel(opopId, date);
+    }
+
+    @SecurityRequirement(name = "Bearer Authentication")
+    @GetMapping("/analysis")
+    public List<ReportAnalysisOpopDto> makeAnalysisReport(@RequestParam Long opopId,
+                                                          @RequestParam @DateTimeFormat(pattern= "yyyy-MM-dd") Date dateStart,
+                                                          @RequestParam @DateTimeFormat(pattern= "yyyy-MM-dd") Date dateEnd) {
+        return reportService.makeAnalysisReport(opopId, dateStart, dateEnd);
+    }
+
+    @SecurityRequirement(name = "Bearer Authentication")
+    @GetMapping("/analysis/save")
+    public void saveAnalysisReportExcel(@RequestParam Long opopId,
+                                        @RequestParam @DateTimeFormat(pattern= "yyyy-MM-dd") Date dateStart,
+                                        @RequestParam @DateTimeFormat(pattern= "yyyy-MM-dd") Date dateEnd){
+        reportService.saveAnalysisReportExcel(opopId, dateStart, dateEnd);
     }
 }

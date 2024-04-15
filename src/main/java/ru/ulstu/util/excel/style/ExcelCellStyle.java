@@ -4,118 +4,146 @@ import org.apache.poi.ss.usermodel.*;
 
 public class ExcelCellStyle {
     public Workbook book;
+
+    /**
+     * Font title bold and 18pt
+     */
     public Font FontTitle;
+
+    /**
+     * Font title of table bold and 12pt
+     */
     public Font FontTitleTable;
+
+    /**
+     * Font simple 12pt
+     */
     public Font FontSimple;
-    public CellStyle StyleBold;
-    public CellStyle StyleBorderAndBold;
-    public CellStyle StyleBorder;
-    public CellStyle StyleBorderCenter;
-    public CellStyle StyleSimple;
+
+    /**
+     * Cell title bold font
+     */
+    public CellStyle StyleBoldFont;
+
+    /**
+     * Cell borders, bold font, color background, horizontal and vertical align center
+     */
+    public CellStyle StyleBorderBoldFontColorAllCenter;
+
+    /**
+     * Cell borders, simple font, vertical align center, wrap text
+     */
+    public CellStyle StyleBorderSimpleFontVerticalCenterWrap;
+
+    /**
+     * Cell borders, simple font, horizontal and vertical align center
+     */
+    public CellStyle StyleBorderSimpleFontAllCenter;
+
+    /**
+     * Cell simple font
+     */
+    public CellStyle StyleFontSimple;
 
     public ExcelCellStyle(Workbook book) {
         this.book = book;
         this.FontTitle = fontTitle();
         this.FontTitleTable = fontTitleTable();
         this.FontSimple = fontSimple();
-        this.StyleBold = styleBold();
-        this.StyleBorderAndBold = styleBorderAndBold();
-        this.StyleBorder = styleBorder();
-        this.StyleBorderCenter = styleBorderCenter();
-        this.StyleSimple = styleSimple();
+        this.StyleBoldFont = styleBoldFont();
+        this.StyleBorderBoldFontColorAllCenter = styleBorderBoldFontColorAllCenter();
+        this.StyleBorderSimpleFontVerticalCenterWrap = styleBorderSimpleFontVerticalCenterWrap();
+        this.StyleBorderSimpleFontAllCenter = styleBorderSimpleFontAllCenter();
+        this.StyleFontSimple = styleFontSimple();
     }
 
-    // Font title bold and 18pt
-    public Font fontTitle() {
+    private Font fontTitle() {
         Font fontTitle = book.createFont();
         fontTitle.setBold(true);
         fontTitle.setFontName("Times New Roman");
         fontTitle.setFontHeightInPoints((short) 16);
         return fontTitle;
     }
-
-    // Font title of table bold and 12pt
-    public Font fontTitleTable() {
+    private Font fontTitleTable() {
         Font fontTitleTable = book.createFont();
         fontTitleTable.setBold(true);
         fontTitleTable.setFontName("Times New Roman");
         fontTitleTable.setFontHeightInPoints((short) 12);
         return fontTitleTable;
     }
-
-    // Font simple 12pt
-    public Font fontSimple() {
+    private Font fontSimple() {
         Font fontSimple = book.createFont();
         fontSimple.setFontName("Times New Roman");
         fontSimple.setFontHeightInPoints((short) 12);
         return fontSimple;
     }
 
-    // Cell bold font
-    public CellStyle styleBold() {
-        CellStyle styleBold = book.createCellStyle();
-        styleBold.setFont(fontTitle());
-        return styleBold;
+    private CellStyle styleBoldFont() {
+        CellStyle styleBoldFont = book.createCellStyle();
+        styleBoldFont.setFont(fontTitle());
+        return styleBoldFont;
     }
+    private CellStyle styleBorderBoldFontColorAllCenter() {
+        CellStyle styleBorderBoldFontColorAllCenter = book.createCellStyle();
 
+        styleBorderBoldFontColorAllCenter.setBorderBottom(BorderStyle.THIN);
+        styleBorderBoldFontColorAllCenter.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+        styleBorderBoldFontColorAllCenter.setBorderLeft(BorderStyle.THIN);
+        styleBorderBoldFontColorAllCenter.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+        styleBorderBoldFontColorAllCenter.setBorderRight(BorderStyle.THIN);
+        styleBorderBoldFontColorAllCenter.setRightBorderColor(IndexedColors.BLACK.getIndex());
+        styleBorderBoldFontColorAllCenter.setBorderTop(BorderStyle.THIN);
+        styleBorderBoldFontColorAllCenter.setTopBorderColor(IndexedColors.BLACK.getIndex());
 
-    // Cell bold font and borders and color background
-    public CellStyle styleBorderAndBold() {
-        CellStyle styleBorderAndBold = book.createCellStyle();
-        styleBorderAndBold.setBorderBottom(BorderStyle.THIN);
-        styleBorderAndBold.setBottomBorderColor(IndexedColors.BLACK.getIndex());
-        styleBorderAndBold.setBorderLeft(BorderStyle.THIN);
-        styleBorderAndBold.setLeftBorderColor(IndexedColors.BLACK.getIndex());
-        styleBorderAndBold.setBorderRight(BorderStyle.THIN);
-        styleBorderAndBold.setRightBorderColor(IndexedColors.BLACK.getIndex());
-        styleBorderAndBold.setBorderTop(BorderStyle.THIN);
-        styleBorderAndBold.setTopBorderColor(IndexedColors.BLACK.getIndex());
-        styleBorderAndBold.setFont(fontTitleTable());
-        styleBorderAndBold.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());
-        styleBorderAndBold.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        styleBorderAndBold.setAlignment(HorizontalAlignment.CENTER);
-        return styleBorderAndBold;
+        styleBorderBoldFontColorAllCenter.setFont(fontTitleTable());
+
+        styleBorderBoldFontColorAllCenter.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());
+        styleBorderBoldFontColorAllCenter.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+        styleBorderBoldFontColorAllCenter.setAlignment(HorizontalAlignment.CENTER);
+        styleBorderBoldFontColorAllCenter.setVerticalAlignment(VerticalAlignment.CENTER);
+        return styleBorderBoldFontColorAllCenter;
     }
+    private CellStyle styleBorderSimpleFontVerticalCenterWrap() {
+        CellStyle styleBorderSimpleFontVerticalCenterWrap = book.createCellStyle();
 
+        styleBorderSimpleFontVerticalCenterWrap.setBorderBottom(BorderStyle.THIN);
+        styleBorderSimpleFontVerticalCenterWrap.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+        styleBorderSimpleFontVerticalCenterWrap.setBorderLeft(BorderStyle.THIN);
+        styleBorderSimpleFontVerticalCenterWrap.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+        styleBorderSimpleFontVerticalCenterWrap.setBorderRight(BorderStyle.THIN);
+        styleBorderSimpleFontVerticalCenterWrap.setRightBorderColor(IndexedColors.BLACK.getIndex());
+        styleBorderSimpleFontVerticalCenterWrap.setBorderTop(BorderStyle.THIN);
+        styleBorderSimpleFontVerticalCenterWrap.setTopBorderColor(IndexedColors.BLACK.getIndex());
 
-    //Cell borders
-    public CellStyle styleBorder() {
-        CellStyle styleBorder = book.createCellStyle();
-        styleBorder.setBorderBottom(BorderStyle.THIN);
-        styleBorder.setBottomBorderColor(IndexedColors.BLACK.getIndex());
-        styleBorder.setBorderLeft(BorderStyle.THIN);
-        styleBorder.setLeftBorderColor(IndexedColors.BLACK.getIndex());
-        styleBorder.setBorderRight(BorderStyle.THIN);
-        styleBorder.setRightBorderColor(IndexedColors.BLACK.getIndex());
-        styleBorder.setBorderTop(BorderStyle.THIN);
-        styleBorder.setTopBorderColor(IndexedColors.BLACK.getIndex());
-        styleBorder.setFont(fontSimple());
-        styleBorder.setVerticalAlignment(VerticalAlignment.CENTER);
-        styleBorder.setWrapText(true);
-        return styleBorder;
+        styleBorderSimpleFontVerticalCenterWrap.setFont(fontSimple());
+
+        styleBorderSimpleFontVerticalCenterWrap.setVerticalAlignment(VerticalAlignment.CENTER);
+        styleBorderSimpleFontVerticalCenterWrap.setWrapText(true);
+        return styleBorderSimpleFontVerticalCenterWrap;
     }
+    private CellStyle styleBorderSimpleFontAllCenter() {
+        CellStyle styleBorderSimpleFontAllCenter = book.createCellStyle();
 
-    //Cell borders and align center
-    public CellStyle styleBorderCenter() {
-        CellStyle styleBorderCenter = book.createCellStyle();
-        styleBorderCenter.setBorderBottom(BorderStyle.THIN);
-        styleBorderCenter.setBottomBorderColor(IndexedColors.BLACK.getIndex());
-        styleBorderCenter.setBorderLeft(BorderStyle.THIN);
-        styleBorderCenter.setLeftBorderColor(IndexedColors.BLACK.getIndex());
-        styleBorderCenter.setBorderRight(BorderStyle.THIN);
-        styleBorderCenter.setRightBorderColor(IndexedColors.BLACK.getIndex());
-        styleBorderCenter.setBorderTop(BorderStyle.THIN);
-        styleBorderCenter.setTopBorderColor(IndexedColors.BLACK.getIndex());
-        styleBorderCenter.setFont(fontSimple());
-        styleBorderCenter.setAlignment(HorizontalAlignment.CENTER);
-        styleBorderCenter.setVerticalAlignment(VerticalAlignment.CENTER);
-        return styleBorderCenter;
+        styleBorderSimpleFontAllCenter.setBorderBottom(BorderStyle.THIN);
+        styleBorderSimpleFontAllCenter.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+        styleBorderSimpleFontAllCenter.setBorderLeft(BorderStyle.THIN);
+        styleBorderSimpleFontAllCenter.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+        styleBorderSimpleFontAllCenter.setBorderRight(BorderStyle.THIN);
+        styleBorderSimpleFontAllCenter.setRightBorderColor(IndexedColors.BLACK.getIndex());
+        styleBorderSimpleFontAllCenter.setBorderTop(BorderStyle.THIN);
+        styleBorderSimpleFontAllCenter.setTopBorderColor(IndexedColors.BLACK.getIndex());
+
+        styleBorderSimpleFontAllCenter.setFont(fontSimple());
+
+        styleBorderSimpleFontAllCenter.setAlignment(HorizontalAlignment.CENTER);
+        styleBorderSimpleFontAllCenter.setVerticalAlignment(VerticalAlignment.CENTER);
+
+        return styleBorderSimpleFontAllCenter;
     }
-
-    //Cell simple
-    public CellStyle styleSimple() {
-        CellStyle styleSimple = book.createCellStyle();
-        styleSimple.setFont(fontSimple());
-        return styleSimple;
+    private CellStyle styleFontSimple() {
+        CellStyle styleFontSimple = book.createCellStyle();
+        styleFontSimple.setFont(fontSimple());
+        return styleFontSimple;
     }
 }
