@@ -9,7 +9,7 @@ import java.util.Date;
 @Entity
 @NoArgsConstructor
 @RequiredArgsConstructor
-//@ToString(exclude = "opop")
+@ToString(exclude = {"opop", "indicator"})
 public class Calculation {
     @EmbeddedId
     @NonNull

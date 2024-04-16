@@ -3,6 +3,8 @@ package ru.ulstu.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.List;
 import java.util.Map;
@@ -12,6 +14,7 @@ import java.util.Set;
 @Entity
 @NoArgsConstructor
 @RequiredArgsConstructor
+
 public class Indicator {
     @Id
     @Column(unique = true)

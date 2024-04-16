@@ -37,7 +37,7 @@ public class ValueService {
 
     @Transactional(readOnly = true)
     public List<Value> findValuesByOpopAndDate(Long opopId, Date date){
-        return valueRepository.findAllByOpopIdAndIdDate(opopId, date);
+        return valueRepository.findAllByOpopIdAndIdDateOrderByIdVariableKeyAsc(opopId, date);
     }
 
     @Transactional(readOnly = true)

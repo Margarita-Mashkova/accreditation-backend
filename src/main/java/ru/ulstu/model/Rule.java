@@ -1,15 +1,14 @@
 package ru.ulstu.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
+import lombok.*;
 
 @Entity
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
+@ToString(exclude = "indicator")
 public class Rule {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -19,6 +18,7 @@ public class Rule {
     @NonNull
     private int score;
     @NonNull
+    @NotBlank(message = "Rule level can't be null or empty")
     private String level;
 
     @ManyToOne

@@ -4,10 +4,13 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.util.List;
+
 @Data
 @Entity
 @NoArgsConstructor
 @RequiredArgsConstructor
+@ToString(exclude = {"values", "calculations", "user"})
 public class OPOP {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,6 +26,17 @@ public class OPOP {
     
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @NonNull
     private User user;
+
+    @OneToMany(mappedBy = "opop", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Value> values;
+
+    @OneToMany(mappedBy = "opop", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Calculation> calculations;
+
+    public OPOP(@NonNull String name, @NonNull String level, User user) {
+        this.name = name;
+        this.level = level;
+        this.user = user;
+    }
 }

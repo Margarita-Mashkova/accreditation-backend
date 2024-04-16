@@ -31,7 +31,7 @@ public class ReportService {
     @Autowired
     private CalculationMapper calculationMapper;
 
-    @Transactional(readOnly = true)
+    @Transactional
     public ReportCalculationOpopDto makeCalculationOpopReport(Long opopId, Date date) {
         ReportCalculationOpopDto reportData = new ReportCalculationOpopDto();
         OPOP opop = opopService.findOpopById(opopId);

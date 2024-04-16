@@ -58,7 +58,21 @@ public class CalculationService {
         return calculationRepository.save(calculation);
     }
 
+    // Возвращает рассчитаные значения для каждого показателя
     @Transactional
+    public List<Calculation> makeCalculationData(Long opopId, Date date) {
+        List<Indicator> indicatorList = indicatorService.findAllIndicators();
+        List<Calculation> calculations = new ArrayList<>();
+        for (Indicator indicator : indicatorList) {
+            CalculationId calculationId = new CalculationId(opopId, indicator.getKey(), date);
+            Calculation calculatedIndicator = calculateIndicator(calculationId);
+            calculations.add(calculatedIndicator);
+        }
+        calculationRepository.saveAll(calculations);
+        return calculations;
+    }
+
+    // Расчет значений для показателя
     public Calculation calculateIndicator(CalculationId calculationId) {
         OPOP opop = opopService.findOpopById(calculationId.getOpopId());
         Indicator indicator = indicatorService.findIndicatorByKey(calculationId.getIndicatorKey());
@@ -127,24 +141,11 @@ public class CalculationService {
 
             Calculation calculation = new Calculation(calculationId, indicator, opop, value, score, level);
             validatorUtil.validate(calculation);
-            return calculationRepository.save(calculation);
+            return calculation;
         }
         else {
             throw new ReportCalculationException();
         }
-    }
-
-    // Возвращает рассчитаные значения для каждого показателя
-    @Transactional
-    public List<Calculation> makeCalculationData(Long opopId, Date date) {
-        List<Indicator> indicatorList = indicatorService.findAllIndicators();
-        List<Calculation> calculations = new ArrayList<>();
-        for (Indicator indicator : indicatorList) {
-            CalculationId calculationId = new CalculationId(opopId, indicator.getKey(), date);
-            Calculation calculatedIndicator = calculateIndicator(calculationId);
-            calculations.add(calculatedIndicator);
-        }
-        return calculations;
     }
 
     @Transactional

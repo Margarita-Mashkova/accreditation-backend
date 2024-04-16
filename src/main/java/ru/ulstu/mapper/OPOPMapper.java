@@ -14,6 +14,8 @@ public interface OPOPMapper {
 
     @AfterMapping
     default void setUserLogin(OPOP opop, @MappingTarget OPOPDto opopDto){
-        opopDto.setUserLogin(opop.getUser().getLogin());
+        if(opop.getUser() != null){
+            opopDto.setUserLogin(opop.getUser().getLogin());
+        }
     }
 }

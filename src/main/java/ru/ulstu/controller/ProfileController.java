@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.ulstu.dto.AuthDto;
 import ru.ulstu.dto.ProfileDto;
 import ru.ulstu.dto.UserDto;
+import ru.ulstu.dto.UserInfoDto;
 import ru.ulstu.mapper.UserMapper;
 import ru.ulstu.model.User;
 import ru.ulstu.service.UserService;
@@ -22,9 +23,9 @@ public class ProfileController {
 
     @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping("/me")
-    public UserDto me(@AuthenticationPrincipal User user) {
+    public UserInfoDto me(@AuthenticationPrincipal User user) {
         //System.out.println(SecurityContextHolder.getContext().getAuthentication().getAuthorities());
-        return userMapper.toUserDto(user);
+        return userMapper.toUserInfoDto(user);
     }
 
     @PostMapping("/auth")

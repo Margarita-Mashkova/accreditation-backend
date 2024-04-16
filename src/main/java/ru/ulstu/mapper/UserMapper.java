@@ -7,6 +7,7 @@ import org.mapstruct.ReportingPolicy;
 import ru.ulstu.dto.AuthDto;
 import ru.ulstu.dto.OPOPDto;
 import ru.ulstu.dto.UserDto;
+import ru.ulstu.dto.UserInfoDto;
 import ru.ulstu.model.OPOP;
 import ru.ulstu.model.User;
 
@@ -14,9 +15,12 @@ import ru.ulstu.model.User;
 public interface UserMapper {
     User fromAuthDto(AuthDto authDto);
     UserDto toUserDto(User user);
+    UserInfoDto toUserInfoDto(User user);
 
     @AfterMapping
     default void setUserLogin(OPOP opop, @MappingTarget OPOPDto opopDto){
-        opopDto.setUserLogin(opop.getUser().getLogin());
+        if(opop.getUser() != null){
+            opopDto.setUserLogin(opop.getUser().getLogin());
+        }
     }
 }
