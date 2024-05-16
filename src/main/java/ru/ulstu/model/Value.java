@@ -28,8 +28,6 @@ public class Value {
     @MapsId("variable_key")
     @NonNull
     private Variable variable;
-
-    // TODO: Подумать над типом данных
     @NonNull
     private float value;
 }

@@ -1,6 +1,10 @@
 package ru.ulstu.service;
 
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,19 +12,28 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.ulstu.dto.AnalysisValuesDto;
 import ru.ulstu.dto.ReportAnalysisOpopDto;
 import ru.ulstu.dto.ReportCalculationOpopDto;
+import ru.ulstu.dto.ReportFileDto;
 import ru.ulstu.mapper.CalculationMapper;
 import ru.ulstu.model.Calculation;
 import ru.ulstu.model.OPOP;
 import ru.ulstu.util.excel.style.ExcelCellStyle;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class ReportService {
@@ -78,7 +91,7 @@ public class ReportService {
     }
 
     @Transactional
-    public void saveCalculationOpopReportExcel(Long opopId, Date date) {
+    public ReportFileDto saveCalculationOpopReportExcel(Long opopId, Date date) {
         ReportCalculationOpopDto reportData = makeCalculationOpopReport(opopId, date);
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
         String dateString = sdf.format(date);
@@ -169,21 +182,33 @@ public class ReportService {
         }
 
         //Запись в файл
-        //TODO: подумать о записи новых ОПОП в существующий файл
-        Path downloadsPath = Paths.get(System.getProperty("user.home"), "Downloads");
-        Path parentPath = downloadsPath.getParent();
-        String downloadsFolderPath = parentPath.toString() + "/Downloads/";
-        String pathToSave = downloadsFolderPath.replace("\\", "/");
+        final String filename = String.format("Расчет_%s_%s.xlsx", reportData.getOpopName(), dateString);
+        final String filePath = "reports/" + filename;
 
-        try (OutputStream fileOut = new FileOutputStream(pathToSave +
-                String.format("Расчет_%s_%s.xlsx", reportData.getOpopName(), dateString))) {
+        try (OutputStream fileOut = new FileOutputStream(filePath)) {
             book.write(fileOut);
             book.close();
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
         } catch (IOException e) {
-            System.out.println("Error writing " + e);
+            throw new RuntimeException(e);
         }
+
+        // Получение данных файла
+        byte[] data;
+        try (InputStream inputStream = new FileInputStream(filePath)) {
+            data = IOUtils.toByteArray(inputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Удаление файла
+        File file = new File(filePath);
+        file.delete();
+
+        // Передача данных в контроллер
+        return ReportFileDto.builder()
+                .filename(filename)
+                .data(data)
+                .build();
     }
 
     @Transactional
@@ -247,7 +272,7 @@ public class ReportService {
     }
 
     @Transactional
-    public void saveAnalysisReportExcel(Long opopId, Date dateStart, Date dateEnd) {
+    public ReportFileDto saveAnalysisReportExcel(Long opopId, Date dateStart, Date dateEnd) {
         List<ReportAnalysisOpopDto> reportData = makeAnalysisReport(opopId, dateStart, dateEnd);
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
         String dateStartString = sdf.format(dateStart);
@@ -289,27 +314,41 @@ public class ReportService {
         for (int i = 2; i < 4; i++) {
             sheetAllIndicators.autoSizeColumn(i);
         }
-        
-        //Запись в файл
-        Path downloadsPath = Paths.get(System.getProperty("user.home"), "Downloads");
-        Path parentPath = downloadsPath.getParent();
-        String downloadsFolderPath = parentPath.toString() + "/Downloads/";
-        String pathToSave = downloadsFolderPath.replace("\\", "/");
 
-        try (OutputStream fileOut = new FileOutputStream(pathToSave +
-                String.format("Анализ_%s_%s_%s.xlsx", reportData.get(0).getOpopName(), dateStartString, dateEndString))) {
+        //Запись в файл
+        final String filename = String.format("Анализ_%s_%s_%s.xlsx", reportData.get(0).getOpopName(),
+                dateStartString, dateEndString);
+        final String filePath = "reports/" + filename;
+
+        try (OutputStream fileOut = new FileOutputStream(filePath)) {
             book.write(fileOut);
             book.close();
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
         } catch (IOException e) {
-            System.out.println("Error writing " + e);
+            throw new RuntimeException(e);
         }
+
+        // Получение данных файла
+        byte[] data;
+        try (InputStream inputStream = new FileInputStream(filePath)) {
+            data = IOUtils.toByteArray(inputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Удаление файла
+        File file = new File(filePath);
+        file.delete();
+
+        // Передача данных в контроллер
+        return ReportFileDto.builder()
+                .filename(filename)
+                .data(data)
+                .build();
     }
 
 
     private void makeTitleForTableAnalysis(Sheet sheet, ExcelCellStyle styles,
-                                           String opopName, String dateStart, String dateEnd){
+                                           String opopName, String dateStart, String dateEnd) {
         // Заголовок
         Row rowTitle = sheet.createRow(0);
         Cell cellTitle = rowTitle.createCell(0);
@@ -336,7 +375,7 @@ public class ReportService {
     }
 
     private int addDataToTableAnalysis(Sheet sheet, ExcelCellStyle styles,
-                                        ReportAnalysisOpopDto reportItem, int rowIndex){
+                                       ReportAnalysisOpopDto reportItem, int rowIndex) {
         // Наименование показателя
         Row rowIndicatorName = sheet.createRow(rowIndex);
         String[] indicatorNameData = {"Наименование показателя", reportItem.getIndicatorName()};
@@ -396,7 +435,7 @@ public class ReportService {
     }
 
     private void makeTotalTableAnalysis(Workbook book, ExcelCellStyle styles,
-                                        Long opopId, Date dateStart, Date dateEnd, String opopName){
+                                        Long opopId, Date dateStart, Date dateEnd, String opopName) {
         List<Calculation> reportData = calculationService.findCalculationsByPeriod(opopId, dateStart, dateEnd);
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
         String dateStartString = sdf.format(dateStart);
@@ -406,7 +445,7 @@ public class ReportService {
         makeTitleForTableAnalysis(sheet, styles, opopName, dateStartString, dateEndString);
 
         // Заголовки таблицы
-        String[] tableTitles = { "Наименование показателя", "Обозначение показателя", "Дата мониторинга", "Значение",
+        String[] tableTitles = {"Наименование показателя", "Обозначение показателя", "Дата мониторинга", "Значение",
                 "Баллы", "Планирование"};
         Row rowTitlesTable = sheet.createRow(5);
         for (int i = 0; i < 6; i++) {
