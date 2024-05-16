@@ -77,7 +77,7 @@ public class ReportService {
         return reportData;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public void saveCalculationOpopReportExcel(Long opopId, Date date) {
         ReportCalculationOpopDto reportData = makeCalculationOpopReport(opopId, date);
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
@@ -186,7 +186,7 @@ public class ReportService {
         }
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<ReportAnalysisOpopDto> makeAnalysisReport(Long opopId, Date dateStart, Date dateEnd) {
         List<ReportAnalysisOpopDto> reportData = new ArrayList<>();
         OPOP opop = opopService.findOpopById(opopId);
@@ -246,7 +246,7 @@ public class ReportService {
         return reportData;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public void saveAnalysisReportExcel(Long opopId, Date dateStart, Date dateEnd) {
         List<ReportAnalysisOpopDto> reportData = makeAnalysisReport(opopId, dateStart, dateEnd);
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");

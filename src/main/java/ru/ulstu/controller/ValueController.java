@@ -87,4 +87,11 @@ public class ValueController {
     public void deleteAllValues(){
         valueService.deleteAllValues();
     }
+
+    @SecurityRequirement(name = "Bearer Authentication")
+    @GetMapping("/patternFile")
+    public void getPatternFile(@RequestParam Long opopId,
+                               @RequestParam @DateTimeFormat(pattern= "yyyy-MM-dd") Date date){
+        valueService.generatePatternFile(opopId, date);
+    }
 }

@@ -15,7 +15,6 @@ public class Rule {
     private Long id;
     private Integer min;
     private Integer max;
-    @NonNull
     private int score;
     @NonNull
     @NotBlank(message = "Rule level can't be null or empty")
@@ -26,7 +25,7 @@ public class Rule {
     @NonNull
     private Indicator indicator;
 
-    public Rule(Integer min, Integer max, @NonNull int score, String level) {
+    public Rule(Integer min, Integer max, int score, @NonNull String level) {
         this.min = min;
         this.max = max;
         this.score = score;
