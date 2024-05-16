@@ -1,6 +1,7 @@
 package ru.ulstu.service;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -8,12 +9,15 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import ru.ulstu.dto.ValueDto;
 import ru.ulstu.model.OPOP;
 import ru.ulstu.model.Value;
 import ru.ulstu.model.ValueId;
 import ru.ulstu.model.Variable;
 import ru.ulstu.repository.ValueRepository;
 import ru.ulstu.service.exception.ValueNotFoundException;
+import ru.ulstu.util.excel.ExcelHelper;
 import ru.ulstu.util.excel.style.ExcelCellStyle;
 import ru.ulstu.util.validation.ValidatorUtil;
 
@@ -142,7 +146,7 @@ public class ValueService {
             cellVariableKey.setCellStyle(styles.StyleBorderSimpleFontAllCenter);
 
             Cell cellValue = rowIndicator.createCell(2);
-            cellValue.setCellValue("");
+            cellValue.setCellType(CellType.NUMERIC);
             cellValue.setCellStyle(styles.StyleBorderSimpleFontAllCenter);
 
             rowIndex++;
@@ -158,7 +162,7 @@ public class ValueService {
         String pathToSave = downloadsFolderPath.replace("\\", "/");
 
         try (OutputStream fileOut = new FileOutputStream(pathToSave +
-                String.format("Шаблон данных для расчета_%s_%s.xlsx", opop.getName(), dateString))) {
+                String.format("Данные для расчета_%s_%s.xlsx", opop.getName(), dateString))) {
             book.write(fileOut);
             book.close();
         } catch (FileNotFoundException e) {
@@ -166,5 +170,20 @@ public class ValueService {
         } catch (IOException e) {
             System.out.println("Error writing " + e);
         }
+    }
+
+    @Transactional
+    public List<ValueDto> readValuesFromFile(MultipartFile file, Long opopId, Date date) {
+        List<ValueDto> readValues;
+        if (ExcelHelper.hasExcelFormat(file)) {
+            try {
+                readValues = ExcelHelper.excelToValues(file.getInputStream(), opopId, date);
+            } catch (IOException e) {
+                throw new RuntimeException("Fail to read excel data: " + e.getMessage());
+            }
+        } else {
+            throw new RuntimeException("File hasn't .xlsx format");
+        }
+        return readValues;
     }
 }

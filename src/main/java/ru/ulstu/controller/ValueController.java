@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ru.ulstu.dto.ValueDto;
 import ru.ulstu.dto.ValueIdDto;
 import ru.ulstu.mapper.ValueMapper;
@@ -11,6 +12,8 @@ import ru.ulstu.service.ValueService;
 
 import java.util.Date;
 import java.util.List;
+
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 @RestController
 @RequestMapping("/value")
@@ -93,5 +96,13 @@ public class ValueController {
     public void getPatternFile(@RequestParam Long opopId,
                                @RequestParam @DateTimeFormat(pattern= "yyyy-MM-dd") Date date){
         valueService.generatePatternFile(opopId, date);
+    }
+
+    @SecurityRequirement(name = "Bearer Authentication")
+    @PostMapping(path = "/readFile",  consumes = MULTIPART_FORM_DATA_VALUE)
+    public List<ValueDto> readValuesFromFile(@RequestParam MultipartFile file,
+                                             @RequestParam Long opopId,
+                                             @RequestParam @DateTimeFormat(pattern= "yyyy-MM-dd") Date date){
+        return valueService.readValuesFromFile(file, opopId, date);
     }
 }
