@@ -5,11 +5,13 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import ru.ulstu.dto.ReportFileDto;
 import ru.ulstu.dto.ValueDto;
 import ru.ulstu.model.OPOP;
 import ru.ulstu.model.Value;
@@ -21,9 +23,12 @@ import ru.ulstu.util.excel.ExcelHelper;
 import ru.ulstu.util.excel.style.ExcelCellStyle;
 import ru.ulstu.util.validation.ValidatorUtil;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -115,7 +120,7 @@ public class ValueService {
     }
 
     @Transactional
-    public void generatePatternFile(Long opopId, Date date) {
+    public ReportFileDto generatePatternFile(Long opopId, Date date) {
         List<Variable> variables = variableService.findAllVariables();
         OPOP opop = opopService.findOpopById(opopId);
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
@@ -156,20 +161,34 @@ public class ValueService {
             sheet.autoSizeColumn(i);
         }
 
-        Path downloadsPath = Paths.get(System.getProperty("user.home"), "Downloads");
-        Path parentPath = downloadsPath.getParent();
-        String downloadsFolderPath = parentPath.toString() + "/Downloads/";
-        String pathToSave = downloadsFolderPath.replace("\\", "/");
+        //Запись в файл
+        final String filename = String.format("Данные для расчета_%s_%s.xlsx", opop.getName(), dateString);
+        final String filePath = "reports/" + filename;
 
-        try (OutputStream fileOut = new FileOutputStream(pathToSave +
-                String.format("Данные для расчета_%s_%s.xlsx", opop.getName(), dateString))) {
+        try (OutputStream fileOut = new FileOutputStream(filePath)) {
             book.write(fileOut);
             book.close();
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
         } catch (IOException e) {
-            System.out.println("Error writing " + e);
+            throw new RuntimeException(e);
         }
+
+        // Получение данных файла
+        byte[] data;
+        try (InputStream inputStream = new FileInputStream(filePath)) {
+            data = IOUtils.toByteArray(inputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Удаление файла
+        File file = new File(filePath);
+        file.delete();
+
+        // Передача данных в контроллер
+        return ReportFileDto.builder()
+                .filename(filename)
+                .data(data)
+                .build();
     }
 
     @Transactional

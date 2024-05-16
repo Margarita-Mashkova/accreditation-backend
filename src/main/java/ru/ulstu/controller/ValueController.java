@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ru.ulstu.dto.ReportFileDto;
 import ru.ulstu.dto.ValueDto;
 import ru.ulstu.dto.ValueIdDto;
 import ru.ulstu.mapper.ValueMapper;
@@ -93,9 +94,9 @@ public class ValueController {
 
     @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping("/patternFile")
-    public void getPatternFile(@RequestParam Long opopId,
-                               @RequestParam @DateTimeFormat(pattern= "yyyy-MM-dd") Date date){
-        valueService.generatePatternFile(opopId, date);
+    public ReportFileDto getPatternFile(@RequestParam Long opopId,
+                                        @RequestParam @DateTimeFormat(pattern= "yyyy-MM-dd") Date date){
+        return valueService.generatePatternFile(opopId, date);
     }
 
     @SecurityRequirement(name = "Bearer Authentication")
