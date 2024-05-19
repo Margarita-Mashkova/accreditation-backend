@@ -1,6 +1,7 @@
 package ru.ulstu.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,10 @@ import ru.ulstu.dto.ReportCalculationOpopDto;
 import ru.ulstu.dto.ReportFileDto;
 import ru.ulstu.service.ReportService;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
@@ -50,5 +55,11 @@ public class ReportController {
                                         @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateStart,
                                         @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateEnd) {
         return reportService.saveAnalysisReportExcel(opopId, dateStart, dateEnd);
+    }
+
+    @SecurityRequirement(name = "Bearer Authentication")
+    @GetMapping("/manual")
+    public ReportFileDto getManualWord(@RequestParam String userRole) {
+        return reportService.getManualWord(userRole);
     }
 }

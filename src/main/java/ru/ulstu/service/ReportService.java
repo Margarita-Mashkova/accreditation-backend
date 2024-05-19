@@ -492,4 +492,22 @@ public class ReportService {
             sheet.autoSizeColumn(i);
         }
     }
+
+    public ReportFileDto getManualWord(String userRole){
+        final String filename = String.format("Руководство %s.docx", userRole);
+        final String filePath = "manuals/" + filename;
+
+        byte[] data;
+        try (InputStream inputStream = new FileInputStream(filePath)) {
+            data = IOUtils.toByteArray(inputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Передача данных в контроллер
+        return ReportFileDto.builder()
+                .filename(filename)
+                .data(data)
+                .build();
+    }
 }

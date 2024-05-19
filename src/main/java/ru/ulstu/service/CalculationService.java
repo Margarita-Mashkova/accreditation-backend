@@ -111,7 +111,6 @@ public class CalculationService {
             String level = "";
             List<Rule> scoreRules = indicator.getRules();
             if (scoreRules.size() > 1) {
-                //TODO: подкорректировать условия на пограничные значения
                 for (Rule rule : scoreRules) {
                     // менее min
                     if (rule.getMin() == null) {
