@@ -274,6 +274,9 @@ public class ReportService {
     @Transactional
     public ReportFileDto saveAnalysisReportExcel(Long opopId, Date dateStart, Date dateEnd) {
         List<ReportAnalysisOpopDto> reportData = makeAnalysisReport(opopId, dateStart, dateEnd);
+        if(reportData.size() == 0){
+            throw new RuntimeException("No data for this period");
+        }
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
         String dateStartString = sdf.format(dateStart);
         String dateEndString = sdf.format(dateEnd);

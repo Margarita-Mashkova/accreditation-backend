@@ -43,6 +43,9 @@ dependencies {
     implementation 'net.objecthunter:exp4j:0.4.8'
 
     implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '3.17'
+
+    testImplementation 'junit:junit:4.12'
+    implementation 'org.seleniumhq.selenium:selenium-java:4.16.1'
 }
 
 tasks.named('test') {
