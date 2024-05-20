@@ -52,10 +52,10 @@ class AccreditationApplicationTests {
 	}
 
 
-//	@Test
-//	@Order(1)
-//	void contextLoads() {
-//	}
+	@Test
+	@Order(1)
+	void contextLoads() {
+	}
 
 	@Test
 	@Order(2)
@@ -140,9 +140,10 @@ class AccreditationApplicationTests {
 		Assertions.assertEquals("Тип графиков", labelGraphics);
 	}
 
-//	@AfterAll
-//	public static void tearDown() {
-//		//Закрытие окна браузера
-//		driver.quit();
-//	}
+	@Test
+	@Order(8)
+	public void tearDown() {
+		//Закрытие окна браузера
+		driver.quit();
+	}
 }
